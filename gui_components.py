@@ -5,6 +5,8 @@ from data_analysis import create_scatter_plot
 from input_data import open_file
 from tkinter import ttk
 
+from ScatterPlotAnalysis import ScatterPlotAnalysis
+
 
 class DataAnalysisApp:
 	# Constructor
@@ -92,15 +94,8 @@ class DataAnalysisApp:
 		return [col_checkbox["text"] for col_checkbox in self.columns_to_analyze.values() if col_checkbox["var"].get()]
 
 	def show_scatter_plot(self):
-		selected_columns = self.get_selected_columns()
-		fig = create_scatter_plot(self.df, selected_columns)
-		if fig:
-			new_window = tk.Toplevel(self.tk_root)
-			new_window.title("Streudiagramm")
-
-			canvas = FigureCanvasTkAgg(fig, master=new_window)
-			canvas.draw()
-			canvas.get_tk_widget().pack()
+		self.scatter_analysis = ScatterPlotAnalysis(self)
+		self.scatter_analysis.show_scatter_plot()
 
 	def analyze(self):
 		selected_columns = self.get_selected_columns()
