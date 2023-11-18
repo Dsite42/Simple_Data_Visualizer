@@ -17,21 +17,21 @@ class DataAnalysisApp:
 		self.columns_to_analyze = {}
 		self.df = None
 
-		open_button = tk.Button(tk_root, text="CSV-Datei öffnen", command=lambda: open_file(self))
-		open_button.pack()
 
-		analyze_button = tk.Button(tk_root, text="Analysieren", command=self.analyze)
-		analyze_button.pack()
+		# Input_Data Frame
+		input_data_frame = tk.Frame(tk_root)
+		input_data_frame.pack(padx=5, pady=5)
 
-		scatter_button = tk.Button(tk_root, text="Scatter", command=self.show_scatter_plot)
-		scatter_button.pack()
+		# Button to open csv
+		open_button = tk.Button(input_data_frame, text="Open CSV file", command=lambda: open_file(self))
+		open_button.pack(side=tk.LEFT, padx=5, pady=5)
 
+		# CSV columns frame
 		self.columns_frame = tk.Frame(tk_root)
 		self.columns_frame.pack()
 
+		# Closing main window
 		tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
-
-
 
 
 
@@ -45,35 +45,32 @@ class DataAnalysisApp:
 		self.tab_control.add(self.histogram_tab, text='Histogramm')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
 		self.tab_control.pack(expand=1, fill="both")
+  
+		# Objekte für die verschiedenen Analysen erstellen
+		self.scatter_analysis = ScatterPlotAnalysis(self)
+		self.histogram_analysis = None  # Erstellen Sie hier das Histogramm-Analyseobjekt
+		self.line_chart_analysis = None  # Erstellen Sie hier das Liniendiagramm-Analyseobjekt
 
-		# Initialisieren der Scatter Plot Einstellungen
-		self.init_scatter_tab()
-
-		# Initialisieren der Histogramm Einstellungen
-		self.init_histogram_tab()
-
-		# Initialisieren der Liniendiagramm Einstellungen
-		self.init_line_chart_tab()
-
-
-	def init_scatter_tab(self):
-		print("X")
-		# Initialisierung der Scatter Plot Einstellungen
-		# ...
-
-	def init_histogram_tab(self):
-		print("X")
-
-		# Initialisierung der Histogramm Einstellungen
-		# ...
-
-	def init_line_chart_tab(self):
-		print("X")
-		# Initialisierung der Liniendiagramm Einstellungen
-		# ...
+		# UI der Analysen initialisieren
+		self.scatter_analysis.init_ui(self.scatter_tab)  
+		# Event-Handler für Tabwechsel
+		self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
 
+	def on_tab_changed(self, event):
+		selected_tab = event.widget.select()
+		tab_text = event.widget.tab(selected_tab, "text")
 
+		if tab_text == "Scatter Plot":
+			self.scatter_analysis.init_ui(self.scatter_tab)
+		elif tab_text == "Histogramm":
+			if self.histogram_analysis is None:
+				self.histogram_analysis = HistogramAnalysis(self)
+			self.histogram_analysis.init_ui(self.histogram_tab)
+		elif tab_text == "Liniendiagramm":
+			if self.line_chart_analysis is None:
+				self.line_chart_analysis = LineChartAnalysis(self)
+			self.line_chart_analysis.init_ui(self.line_chart_tab)
 
 	def update_column_checklist(self):
 		for widget in self.columns_frame.winfo_children():
@@ -96,8 +93,3 @@ class DataAnalysisApp:
 	def show_scatter_plot(self):
 		self.scatter_analysis = ScatterPlotAnalysis(self)
 		self.scatter_analysis.show_scatter_plot()
-
-	def analyze(self):
-		selected_columns = self.get_selected_columns()
-		print(f"Ausgewählte Spalten für die Analyse: {selected_columns}")
-		# Hier können Sie Ihre Analysefunktionen hinzufügen
