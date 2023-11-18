@@ -12,6 +12,7 @@ class DataAnalysisApp:
 	# Constructor
 	def __init__(self, tk_root):
 		self.tk_root = tk_root
+		#tk_root.geometry("800x600")
 		tk_root.title("Einfaches Datenanalyse-Programm")
 
 		self.columns_to_analyze = {}

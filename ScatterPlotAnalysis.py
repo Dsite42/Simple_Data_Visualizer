@@ -3,6 +3,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from BaseAnalysis import BaseAnalysis
+import seaborn as sns
+sns.set(style="darkgrid")
 
 class ScatterPlotAnalysis(BaseAnalysis):
 	def __init__(self, main_app):
@@ -15,11 +17,13 @@ class ScatterPlotAnalysis(BaseAnalysis):
 	def show_scatter_plot(self):
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) == 2:
-			fig = plt.figure(figsize=(8, 6))
-			plt.scatter(self.main_app.df[selected_columns[0]], self.main_app.df[selected_columns[1]])
-			plt.xlabel(selected_columns[0])
-			plt.ylabel(selected_columns[1])
-			plt.title(self.plot_title.get())
+			# Create a Seaborn relational plot
+			g = sns.relplot(x=selected_columns[0], y=selected_columns[1], data=self.main_app.df)
+			fig = g.fig
+			fig.set_size_inches(8, 6)
+
+			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+			fig.subplots_adjust(top=0.94)
 			self.scatter_last_window, self.scatter_last_canvas = self.display_plot(fig, self.scatter_last_window, self.scatter_last_canvas)
 		else:
 			messagebox.showinfo("Information", "Select two Columns")
@@ -27,11 +31,12 @@ class ScatterPlotAnalysis(BaseAnalysis):
 	def refresh_scatter_plot(self):
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) == 2:
-			fig = plt.figure(figsize=(8, 6))
-			plt.scatter(self.main_app.df[selected_columns[0]], self.main_app.df[selected_columns[1]])
-			plt.xlabel(selected_columns[0])
-			plt.ylabel(selected_columns[1])
-			plt.title(self.plot_title.get())
+			g = sns.relplot(x=selected_columns[0], y=selected_columns[1], data=self.main_app.df)
+			fig = g.fig
+			fig.set_size_inches(8, 6)
+
+			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+			fig.subplots_adjust(top=0.94)
 			self.scatter_last_canvas = self.display_refresh_plot(fig, self.scatter_last_canvas)
 		else:
 			messagebox.showinfo("Information", "Select two Columns")
