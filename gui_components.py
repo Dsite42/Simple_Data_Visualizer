@@ -7,7 +7,6 @@ from tkinter import ttk
 
 from ScatterPlotAnalysis import ScatterPlotAnalysis
 
-
 class DataAnalysisApp:
 	# Constructor
 	def __init__(self, tk_root):
@@ -17,8 +16,7 @@ class DataAnalysisApp:
 
 		self.columns_to_analyze = {}
 		self.df = None
-
-
+  
 		# Input_Data Frame
 		input_data_frame = tk.Frame(tk_root)
 		input_data_frame.pack(padx=5, pady=5)
@@ -83,11 +81,11 @@ class DataAnalysisApp:
 		if tab_text == "Scatter Plot":
 			self.scatter_analysis.init_ui(self.scatter_tab)
 		elif tab_text == "Histogramm":
-			if self.histogram_analysis is None:
+			if self.histogram_analysis is not None:
 				self.histogram_analysis = HistogramAnalysis(self)
 			self.histogram_analysis.init_ui(self.histogram_tab)
 		elif tab_text == "Liniendiagramm":
-			if self.line_chart_analysis is None:
+			if self.line_chart_analysis is not None:
 				self.line_chart_analysis = LineChartAnalysis(self)
 			self.line_chart_analysis.init_ui(self.line_chart_tab)
 

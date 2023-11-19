@@ -10,11 +10,13 @@ def read_csv(file_path):
 		return None, str(e)
 
 def open_file(self):
-	file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-	if file_path:
-		self.df, error = read_csv(file_path)
-		if error:
-			messagebox.showerror("Fehler beim Einlesen der Datei", error)
-		else:
-			self.update_column_checklist()
+	#file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+	#if file_path:
+		#self.df, error = read_csv(file_path)
+		self.df = pd.read_csv("data.csv", sep=';')
+		#if error:
+		#	messagebox.showerror("Fehler beim Einlesen der Datei", error)
+		#else:
+		self.update_column_checklist()
+		self.scatter_analysis.hue_combobox['values'] = list(self.df.columns)
 
