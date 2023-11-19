@@ -19,4 +19,6 @@ def open_file(self):
 		#else:
 		self.update_column_checklist()
 		self.scatter_analysis.hue_combobox['values'] = list(self.df.columns)
+		self.scatter_analysis.size_combobox['values'] = list(self.df.columns)
+		self.scatter_analysis.style_combobox['values'] = list(self.df.columns)
 

@@ -18,6 +18,8 @@ class ScatterPlotAnalysis(BaseAnalysis):
 
 		#plot_args
 		self.hue = tk.StringVar()
+		self.size = tk.StringVar()
+		self.style = tk.StringVar()
 
  
  
@@ -27,16 +29,18 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": self.main_app.df}
 		if self.hue.get():
 			plot_args["hue"] = self.hue.get()
+		if self.size.get():
+			plot_args["size"] = self.size.get()
+		if self.style.get():
+			plot_args["style"] = self.style.get()
 		return plot_args
  
 	def show_scatter_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		#plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": self.main_app.df}
 		plot_args = self.create_plot_args()
 		if len(selected_columns) == 2:
 			# Create a Seaborn relational plot
 			g = sns.relplot(**plot_args)
-			#g = sns.relplot(x=selected_columns[0], y=selected_columns[1], data=self.main_app.df)
 			if self.title_x_axis.get() != "":
 				g.set_axis_labels(x_var=self.title_x_axis.get())
 			if self.title_y_axis.get() != "":
@@ -119,13 +123,22 @@ class ScatterPlotAnalysis(BaseAnalysis):
 
 		# Frame for plot arguments
 		plot_arguments_frame = tk.Frame(parent_frame)
-		plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
+		plot_arguments_frame.pack(padx=5, pady=5, fill='x')
 
-		# combobox for hue argument
-		self.hue_label = tk.Label(plot_arguments_frame, text="hue:")
-		self.hue_label.pack(side=tk.LEFT, padx=5)
+		# Hue
+		self.hue_label = tk.Label(plot_arguments_frame, text="Hue:")
+		self.hue_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
 		self.hue_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.hue)
-		if self.main_app.df is not None:
-			self.hue_combobox['values'] = list(self.main_app.df.columns)
-		self.hue_combobox.pack(side=tk.LEFT)
-  
+		self.hue_combobox.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+
+		# Size
+		self.size_label = tk.Label(plot_arguments_frame, text="Size:")
+		self.size_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+		self.size_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.size)
+		self.size_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+
+		# Style
+		self.style_label = tk.Label(plot_arguments_frame, text="Style:")
+		self.style_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
+		self.style_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.style)
+		self.style_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
