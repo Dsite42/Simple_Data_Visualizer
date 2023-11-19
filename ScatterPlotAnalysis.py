@@ -17,6 +17,7 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.scatter_last_canvas = None
 
 		#plot_args
+		self.plot_arguments_frame_visible = True
 		self.hue = tk.StringVar()
 		self.size = tk.StringVar()
 		self.style = tk.StringVar()
@@ -90,7 +91,10 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		# Button zum Erneuern des Scatter Plots
 		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.show_scatter_plot(True))
 		show_plot_button.pack(padx=5, pady=5)
-
+  
+		# Button to show and hide more plot aguments
+		self.toggle_arguments_button = tk.Button(button_frame, text="Hide Plot Arguments", command=self.toggle_plot_arguments_frame)
+		self.toggle_arguments_button.pack(padx=5, pady=5)
 
 		# Frame für den Titel und das Eingabefeld
 		title_frame = tk.Frame(parent_frame)
@@ -122,23 +126,29 @@ class ScatterPlotAnalysis(BaseAnalysis):
 
 
 		# Frame for plot arguments
-		plot_arguments_frame = tk.Frame(parent_frame)
-		plot_arguments_frame.pack(padx=5, pady=5, fill='x')
-
+		self.plot_arguments_frame = tk.Frame(parent_frame)
+		self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
 		# Hue
-		self.hue_label = tk.Label(plot_arguments_frame, text="Hue:")
+		self.hue_label = tk.Label(self.plot_arguments_frame, text="Hue:")
 		self.hue_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-		self.hue_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.hue)
+		self.hue_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.hue)
 		self.hue_combobox.grid(row=0, column=1, padx=5, pady=5, sticky='w')
-
 		# Size
-		self.size_label = tk.Label(plot_arguments_frame, text="Size:")
+		self.size_label = tk.Label(self.plot_arguments_frame, text="Size:")
 		self.size_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
-		self.size_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.size)
+		self.size_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.size)
 		self.size_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
-
 		# Style
-		self.style_label = tk.Label(plot_arguments_frame, text="Style:")
+		self.style_label = tk.Label(self.plot_arguments_frame, text="Style:")
 		self.style_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
-		self.style_combobox = ttk.Combobox(plot_arguments_frame, textvariable=self.style)
+		self.style_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.style)
 		self.style_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
+  
+	def toggle_plot_arguments_frame(self):
+		if self.plot_arguments_frame_visible:
+			self.plot_arguments_frame.pack_forget()
+			self.toggle_arguments_button.config(text="Show Plot Arguments")
+		else:
+			self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
+			self.toggle_arguments_button.config(text="Hide Plot Arguments")
+		self.plot_arguments_frame_visible = not self.plot_arguments_frame_visible
