@@ -19,7 +19,6 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.scatter_last_canvas = None
 
 		#plot_args
-		self.plot_arguments_frame_visible = True
 		self.hue = tk.StringVar()
 		self.size = tk.StringVar()
 		self.style = tk.StringVar()
@@ -83,11 +82,10 @@ class ScatterPlotAnalysis(BaseAnalysis):
 
 
 	def init_ui(self, parent_frame):
+		self.plot_arguments_frame_visible = True
 		# Zuvor erstellte Widgets im parent_frame entfernen
 		for widget in parent_frame.winfo_children():
 			widget.destroy()
-
-
 		# Frame für den Button
 		button_frame = tk.Frame(parent_frame)
 		button_frame.pack(padx=5, pady=5)
@@ -133,7 +131,6 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		plot_hight_label.grid(row=4, column=0, padx=5)
 		plot_hight_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_hight)
 		plot_hight_entry.grid(row=4, column=1, padx=5)
-
 
 		# Frame for plot arguments
 		self.plot_arguments_frame = tk.Frame(parent_frame)

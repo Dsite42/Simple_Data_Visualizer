@@ -68,8 +68,6 @@ class DataAnalysisApp:
 		self.histogram_analysis = None  # Erstellen Sie hier das Histogramm-Analyseobjekt
 		self.line_chart_analysis = None  # Erstellen Sie hier das Liniendiagramm-Analyseobjekt
 
-		# UI der Analysen initialisieren
-		self.scatter_analysis.init_ui(self.scatter_tab)  
 		# Event-Handler für Tabwechsel
 		self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
