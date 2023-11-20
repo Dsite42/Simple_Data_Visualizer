@@ -13,6 +13,8 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.plot_title = tk.StringVar(value = "Scatter Plot")
 		self.title_x_axis = tk.StringVar()
 		self.title_y_axis = tk.StringVar()
+		self.plot_with = tk.StringVar()
+		self.plot_hight = tk.StringVar()
 		self.scatter_last_window = None
 		self.scatter_last_canvas = None
 
@@ -46,8 +48,10 @@ class ScatterPlotAnalysis(BaseAnalysis):
 				g.set_axis_labels(x_var=self.title_x_axis.get())
 			if self.title_y_axis.get() != "":
 				g.set_axis_labels(y_var=self.title_y_axis.get())
+			
 			fig = g.fig
-			fig.set_size_inches(8, 6)
+			if self.plot_with.get() and self.plot_hight.get():
+				fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
 			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
 			fig.subplots_adjust(top=0.94)
 			if refresh_plot:
@@ -59,8 +63,12 @@ class ScatterPlotAnalysis(BaseAnalysis):
 
 	def display_refresh_plot(self, fig, scatter_last_canvas):
 		#canvas = FigureCanvasTkAgg(fig, master=self.last_window)
-		scatter_last_canvas.figure = fig
+		scatter_last_canvas.get_tk_widget().destroy()
+		scatter_last_canvas = FigureCanvasTkAgg(fig, master=self.scatter_last_window)
 		scatter_last_canvas.draw()
+		width = fig.get_figwidth() * fig.dpi
+		height = fig.get_figheight() * fig.dpi
+		self.scatter_last_window.geometry(f"{int(width)}x{int(height)}")
 		scatter_last_canvas.get_tk_widget().pack()
 		return scatter_last_canvas
 
@@ -73,7 +81,7 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		scatter_last_canvas.get_tk_widget().pack()
 		return scatter_last_window, scatter_last_canvas
 
-   
+
 	def init_ui(self, parent_frame):
 		# Zuvor erstellte Widgets im parent_frame entfernen
 		for widget in parent_frame.winfo_children():
@@ -96,33 +104,35 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.toggle_arguments_button = tk.Button(button_frame, text="Hide Plot Arguments", command=self.toggle_plot_arguments_frame)
 		self.toggle_arguments_button.pack(padx=5, pady=5)
 
-		# Frame für den Titel und das Eingabefeld
-		title_frame = tk.Frame(parent_frame)
-		title_frame.pack(padx=5, pady=5, anchor='w')
 
+		# Frame for main plot args
+		main_plot_arguments_frame = tk.Frame(parent_frame)
+		main_plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
 		# Eingabefeld für den Titel des Scatter Plots
-		title_label = tk.Label(title_frame, text="Plot title:")
-		title_label.pack(side=tk.LEFT, padx=5)
-
-		title_entry = tk.Entry(title_frame, textvariable=self.plot_title)
-		title_entry.pack(side=tk.LEFT)
-
-
-		# Frame for axis labels
-		axis_frame = tk.Frame(parent_frame)
-		axis_frame.pack(padx=5, pady=5, anchor='w')
-  
+		title_label = tk.Label(main_plot_arguments_frame, text="Plot title:")
+		title_label.grid(row=0, column=0, padx=5)
+		title_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_title)
+		title_entry.grid(row=0, column=1)  
 		# Entry for x-axis label
-		x_axis_label = tk.Label(axis_frame, text="x-axis title:")
-		x_axis_label.pack(side=tk.LEFT, padx=5)
-		x_axis_entry = tk.Entry(axis_frame, textvariable=self.title_x_axis)
-		x_axis_entry.pack(side=tk.LEFT, padx=5)
-  
+		x_axis_label = tk.Label(main_plot_arguments_frame, text="x-axis title:")
+		x_axis_label.grid(row=1, column=0, padx=5)
+		x_axis_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.title_x_axis)
+		x_axis_entry.grid(row=1, column=1, padx=5)
 		# Entry for y-axis label
-		y_axis_entry = tk.Entry(axis_frame, textvariable=self.title_y_axis)
-		y_axis_entry.pack(side=tk.RIGHT, padx=5)
-		y_axis_label = tk.Label(axis_frame, text="y-axis title:")
-		y_axis_label.pack(side=tk.RIGHT, padx=5)
+		y_axis_label = tk.Label(main_plot_arguments_frame, text="y-axis title:")
+		y_axis_label.grid(row=2, column=0, padx=5)
+		y_axis_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.title_y_axis)
+		y_axis_entry.grid(row=2, column=1, padx=5)
+		# Entry for plot with
+		plot_with_label = tk.Label(main_plot_arguments_frame, text="plot with:")
+		plot_with_label.grid(row=3, column=0, padx=5)
+		plot_with_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_with)
+		plot_with_entry.grid(row=3, column=1, padx=5)
+		# Entry for plot hight
+		plot_hight_label = tk.Label(main_plot_arguments_frame, text="plot hight:")
+		plot_hight_label.grid(row=4, column=0, padx=5)
+		plot_hight_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_hight)
+		plot_hight_entry.grid(row=4, column=1, padx=5)
 
 
 		# Frame for plot arguments
