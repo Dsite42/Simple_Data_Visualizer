@@ -53,6 +53,7 @@ class ScatterPlotAnalysis(BaseAnalysis):
 				fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
 			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
 			fig.subplots_adjust(top=0.94)
+   
 			if refresh_plot:
 				self.scatter_last_canvas = self.display_refresh_plot(fig, self.scatter_last_canvas)
 			else:
@@ -74,33 +75,46 @@ class ScatterPlotAnalysis(BaseAnalysis):
 	def display_plot(self, fig, scatter_last_window, scatter_last_canvas):
 		scatter_last_window = tk.Toplevel(self.main_app.tk_root)
 		scatter_last_window.title(self.plot_title.get())
+		save_button = tk.Button(scatter_last_window, text="Save Plot", command=lambda: self.save_plot(fig))
+		save_button.pack()
 
 		scatter_last_canvas = FigureCanvasTkAgg(fig, master=scatter_last_window)
 		scatter_last_canvas.draw()
 		scatter_last_canvas.get_tk_widget().pack()
 		return scatter_last_window, scatter_last_canvas
 
+	def save_plot(self, fig):
+		plot_title = fig._suptitle.get_text() if fig._suptitle else "MyPlot"
+		filepath = filedialog.asksaveasfilename(
+			defaultextension='',
+			filetypes=[("PNG files", "*.png"), ("All Files", "*.*")],
+			title="Save plot",
+			initialfile= plot_title
+		)
+		if filepath:
+			fig.savefig(filepath)
 
 	def init_ui(self, parent_frame):
 		self.plot_arguments_frame_visible = True
 		# Zuvor erstellte Widgets im parent_frame entfernen
 		for widget in parent_frame.winfo_children():
 			widget.destroy()
+   
 		# Frame für den Button
 		button_frame = tk.Frame(parent_frame)
-		button_frame.pack(padx=5, pady=5)
+		button_frame.pack(padx=5, pady=5, anchor='c')
 
 		# Button zum Anzeigen des Scatter Plots
 		show_plot_button = tk.Button(button_frame, text="Show Plot", command=lambda: self.show_scatter_plot(False))
-		show_plot_button.pack(side = tk.LEFT, padx=5, pady=5)
+		show_plot_button.grid(row=0, column=0, padx=5)
   
 		# Button zum Erneuern des Scatter Plots
 		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.show_scatter_plot(True))
-		show_plot_button.pack(padx=5, pady=5)
+		show_plot_button.grid(row=0, column=1, padx=5)
   
 		# Button to show and hide more plot aguments
-		self.toggle_arguments_button = tk.Button(button_frame, text="Hide Plot Arguments", command=self.toggle_plot_arguments_frame)
-		self.toggle_arguments_button.pack(padx=5, pady=5)
+		self.toggle_arguments_button = tk.Button(button_frame, text="Hide Arguments", command=self.toggle_plot_arguments_frame)
+		self.toggle_arguments_button.grid(row=0, column=2, padx=5)
 
 
 		# Frame for main plot args
