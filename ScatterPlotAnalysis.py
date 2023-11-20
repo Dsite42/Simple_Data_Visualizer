@@ -134,7 +134,30 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.style_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
 		self.style_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.style)
 		self.style_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
+
+
+		run_button = tk.Button(self.plot_arguments_frame, text="Run Plot Code", command=self.execute_and_show_plot)
+		run_button.grid(row=3, column=0, padx=5, pady=5, sticky='w')
+		self.code_entry = tk.Text(self.plot_arguments_frame, height=10)
+		self.code_entry.grid(row=3, column=1, padx=5, pady=5, sticky='w')
+		self.code_entry.insert(tk.END, "# Schreiben Sie hier Ihren Code. \n# Stellen Sie sicher, dass das resultierende Figure-Objekt in einer Variablen namens 'fig' gespeichert wird.\n")
+		self.code_entry.insert(tk.END, "#For example:\n#import seaborn as sns\n#sns.set(style='darkgrid')\n#g=sns.jointplot(x=df['Age'],y=df['BMI'],data=df,kind='kde')\n#fig = g.fig\n#fig")
+
+
+	def execute_and_show_plot(self):
+		user_env = {"df": self.main_app.df}  # Hier ist das DataFrame, das Sie dem Benutzer zur Verfügung stellen
+		user_code = self.code_entry.get("1.0", tk.END)
+		fig = exec(user_code, user_env)
   
+		if "fig" in user_env:
+			fig = user_env["fig"]
+			self.scatter_last_window, self.scatter_last_canvas = self.display_plot(fig, self.scatter_last_window, self.scatter_last_canvas)
+		else:
+			# Fehlerbehandlung, falls kein Figure-Objekt vorhanden ist
+			messagebox.showinfo("Error", "The code did not produce a 'fig' variable.")
+			print("Error: The code did not produce a 'fig' variable.")  
+  
+
 	def toggle_plot_arguments_frame(self):
 		if self.plot_arguments_frame_visible:
 			self.plot_arguments_frame.pack_forget()
