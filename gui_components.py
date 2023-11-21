@@ -1,11 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from data_analysis import create_scatter_plot
 from input_data import open_file
 from tkinter import ttk
 
-from ScatterPlotAnalysis import ScatterPlotAnalysis
+from RelPlotAnalysis import RelPlotAnalysis
 from ManualPlotAnalysis import ManualPlotAnalysis
 
 class DataAnalysisApp:
@@ -57,12 +56,12 @@ class DataAnalysisApp:
 		# Erstellen von Tabs für verschiedene Analysen
 		self.current_tab = None
 		self.tab_control = ttk.Notebook(tk_root)
-		self.scatter_tab = ttk.Frame(self.tab_control)
+		self.rel_tab = ttk.Frame(self.tab_control)
 		self.histogram_tab = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
 		self.manual_plot_tab = ttk.Frame(self.tab_control)
 
-		self.tab_control.add(self.scatter_tab, text='Scatter Plot')
+		self.tab_control.add(self.rel_tab, text='Rel Plot')
 		self.tab_control.add(self.histogram_tab, text='Histogramm')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
 		self.tab_control.add(self.manual_plot_tab, text='Manual Plot')
@@ -70,7 +69,7 @@ class DataAnalysisApp:
 		self.tab_control.pack(expand=1, fill="both")
   
 		# Objekte für die verschiedenen Analysen erstellen
-		self.scatter_analysis = ScatterPlotAnalysis(self)
+		self.rel_analysis = RelPlotAnalysis(self)
 		self.histogram_analysis = None  # Erstellen Sie hier das Histogramm-Analyseobjekt
 		self.line_chart_analysis = None  # Erstellen Sie hier das Liniendiagramm-Analyseobjekt
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
@@ -88,8 +87,8 @@ class DataAnalysisApp:
 			if self.manual_plot_analysis is not None:
 				self.manual_plot_analysis.save_code_text()
 
-		if tab_text == "Scatter Plot":
-			self.scatter_analysis.init_ui(self.scatter_tab)
+		if tab_text == "Rel Plot":
+			self.rel_analysis.init_ui(self.rel_tab)
 		elif tab_text == "Histogramm":
 			if self.histogram_analysis is None:
 				self.histogram_analysis = HistogramAnalysis(self)
@@ -122,6 +121,6 @@ class DataAnalysisApp:
 	def get_selected_columns(self):
 		return [col_checkbox["text"] for col_checkbox in self.columns_to_analyze.values() if col_checkbox["var"].get()]
 
-	def show_scatter_plot(self):
-		self.scatter_analysis = ScatterPlotAnalysis(self)
-		self.scatter_analysis.show_scatter_plot()
+	def show_rel_plot(self):
+		self.rel_analysis = RelPlotAnalysis(self)
+		self.rel_analysis.show_rel_plot()

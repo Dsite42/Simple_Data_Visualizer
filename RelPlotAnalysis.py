@@ -6,17 +6,17 @@ from BaseAnalysis import BaseAnalysis
 import seaborn as sns
 sns.set(style="darkgrid")
 
-class ScatterPlotAnalysis(BaseAnalysis):
+class RelPlotAnalysis(BaseAnalysis):
 	def __init__(self, main_app):
 		super().__init__()
 		self.main_app = main_app
-		self.plot_title = tk.StringVar(value = "Scatter Plot")
+		self.plot_title = tk.StringVar(value = "Rel Plot")
 		self.title_x_axis = tk.StringVar()
 		self.title_y_axis = tk.StringVar()
 		self.plot_with = tk.StringVar()
 		self.plot_hight = tk.StringVar()
-		self.scatter_last_window = None
-		self.scatter_last_canvas = None
+		self.rel_last_window = None
+		self.rel_last_canvas = None
 
 		#plot_args
 		self.kind = tk.StringVar()
@@ -41,7 +41,7 @@ class ScatterPlotAnalysis(BaseAnalysis):
 			plot_args["kind"] = self.kind.get()
 		return plot_args
  
-	def show_scatter_plot(self, refresh_plot):
+	def show_rel_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
 		plot_args = self.create_plot_args()
 		if len(selected_columns) == 2:
@@ -59,9 +59,9 @@ class ScatterPlotAnalysis(BaseAnalysis):
 			fig.subplots_adjust(top=0.94)
    
 			if refresh_plot:
-				self.scatter_last_canvas = self.display_refresh_plot(fig, self.scatter_last_canvas)
+				self.rel_last_canvas = self.display_refresh_plot(fig, self.rel_last_canvas)
 			else:
-				self.scatter_last_window, self.scatter_last_canvas = self.display_plot(fig, self.scatter_last_window, self.scatter_last_canvas)
+				self.rel_last_window, self.rel_last_canvas = self.display_plot(fig, self.rel_last_window, self.rel_last_canvas)
 		else:
 			messagebox.showinfo("Information", "Select two Columns")
 
@@ -78,12 +78,12 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		button_frame = tk.Frame(parent_frame)
 		button_frame.pack(padx=5, pady=5, anchor='c')
 
-		# Button zum Anzeigen des Scatter Plots
-		show_plot_button = tk.Button(button_frame, text="Show Plot", command=lambda: self.show_scatter_plot(False))
+		# Button zum Anzeigen des Rel Plots
+		show_plot_button = tk.Button(button_frame, text="Show Plot", command=lambda: self.show_rel_plot(False))
 		show_plot_button.grid(row=0, column=0, padx=5)
   
-		# Button zum Erneuern des Scatter Plots
-		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.show_scatter_plot(True))
+		# Button zum Erneuern des Rel Plots
+		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.show_rel_plot(True))
 		show_plot_button.grid(row=0, column=1, padx=5)
   
 		# Button to show and hide more plot aguments
@@ -94,7 +94,7 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		# Frame for main plot args
 		main_plot_arguments_frame = tk.Frame(parent_frame)
 		main_plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
-		# Eingabefeld für den Titel des Scatter Plots
+		# Eingabefeld für den Titel des Rel Plots
 		title_label = tk.Label(main_plot_arguments_frame, text="Plot title:")
 		title_label.grid(row=0, column=0, padx=5)
 		title_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_title)
