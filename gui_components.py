@@ -6,6 +6,7 @@ from input_data import open_file
 from tkinter import ttk
 
 from ScatterPlotAnalysis import ScatterPlotAnalysis
+from ManualPlotAnalysis import ManualPlotAnalysis
 
 class DataAnalysisApp:
 	# Constructor
@@ -52,21 +53,28 @@ class DataAnalysisApp:
 
 
 
+
 		# Erstellen von Tabs für verschiedene Analysen
+		self.current_tab = None
 		self.tab_control = ttk.Notebook(tk_root)
 		self.scatter_tab = ttk.Frame(self.tab_control)
 		self.histogram_tab = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
+		self.manual_plot_tab = ttk.Frame(self.tab_control)
 
 		self.tab_control.add(self.scatter_tab, text='Scatter Plot')
 		self.tab_control.add(self.histogram_tab, text='Histogramm')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
+		self.tab_control.add(self.manual_plot_tab, text='Manual Plot')
+  
 		self.tab_control.pack(expand=1, fill="both")
   
 		# Objekte für die verschiedenen Analysen erstellen
 		self.scatter_analysis = ScatterPlotAnalysis(self)
 		self.histogram_analysis = None  # Erstellen Sie hier das Histogramm-Analyseobjekt
 		self.line_chart_analysis = None  # Erstellen Sie hier das Liniendiagramm-Analyseobjekt
+		self.manual_plot_analysis = ManualPlotAnalysis(self)
+
 
 		# Event-Handler für Tabwechsel
 		self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_changed)
@@ -76,16 +84,25 @@ class DataAnalysisApp:
 		selected_tab = event.widget.select()
 		tab_text = event.widget.tab(selected_tab, "text")
 
+		if self.current_tab == "Manual Plot":
+			if self.manual_plot_analysis is not None:
+				self.manual_plot_analysis.save_code_text()
+
 		if tab_text == "Scatter Plot":
 			self.scatter_analysis.init_ui(self.scatter_tab)
 		elif tab_text == "Histogramm":
-			if self.histogram_analysis is not None:
+			if self.histogram_analysis is None:
 				self.histogram_analysis = HistogramAnalysis(self)
 			self.histogram_analysis.init_ui(self.histogram_tab)
 		elif tab_text == "Liniendiagramm":
-			if self.line_chart_analysis is not None:
+			if self.line_chart_analysis is None:
 				self.line_chart_analysis = LineChartAnalysis(self)
 			self.line_chart_analysis.init_ui(self.line_chart_tab)
+		elif tab_text == "Manual Plot":
+			if self.manual_plot_analysis is None:
+				self.manual_plot_analysis = ManualPlotAnalysis(self)
+			self.manual_plot_analysis.init_ui(self.manual_plot_tab)
+		self.current_tab = tab_text
 
 	def update_column_checklist(self):
 		for widget in self.scrollable_frame.winfo_children():
