@@ -23,9 +23,9 @@ class RelPlotAnalysis(BaseAnalysis):
 		self.hue = tk.StringVar()
 		self.size = tk.StringVar()
 		self.style = tk.StringVar()
-  
+		self.row = tk.StringVar()
+		self.col = tk.StringVar()
 
- 
  
  
 	def create_plot_args(self):
@@ -39,6 +39,10 @@ class RelPlotAnalysis(BaseAnalysis):
 			plot_args["style"] = self.style.get()
 		if self.kind.get():
 			plot_args["kind"] = self.kind.get()
+		if self.row.get():
+			plot_args["row"] = self.row.get()
+		if self.col.get():
+			plot_args["col"] = self.col.get()
 		return plot_args
  
 	def show_rel_plot(self, refresh_plot):
@@ -143,6 +147,17 @@ class RelPlotAnalysis(BaseAnalysis):
 		self.style_label.grid(row=3, column=0, padx=5, pady=5, sticky='w')
 		self.style_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.style)
 		self.style_combobox.grid(row=3, column=1, padx=5, pady=5, sticky='w')
+		# Row
+		self.row_label = tk.Label(self.plot_arguments_frame, text="Row:")
+		self.row_label.grid(row=4, column=0, padx=5, pady=5, sticky='w')
+		self.row_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.row)	
+		self.row_combobox.grid(row=4, column=1, padx=5, pady=5, sticky='w')	
+		# Col
+		self.col_label = tk.Label(self.plot_arguments_frame, text="Col:")
+		self.col_label.grid(row=5, column=0, padx=5, pady=5, sticky='w')
+		self.col_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.col)
+		self.col_combobox.grid(row=5, column=1, padx=5, pady=5, sticky='w')
+
   
 
 	def toggle_plot_arguments_frame(self):
