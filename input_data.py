@@ -18,6 +18,7 @@ def open_file(self):
 		#	messagebox.showerror("Fehler beim Einlesen der Datei", error)
 		#else:
 		self.update_column_checklist()
+		self.scatter_analysis.kind_combobox['values'] = ['scatter', 'line']
 		self.scatter_analysis.hue_combobox['values'] = list(self.df.columns)
 		self.scatter_analysis.size_combobox['values'] = list(self.df.columns)
 		self.scatter_analysis.style_combobox['values'] = list(self.df.columns)

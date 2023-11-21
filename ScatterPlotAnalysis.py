@@ -19,9 +19,11 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		self.scatter_last_canvas = None
 
 		#plot_args
+		self.kind = tk.StringVar()
 		self.hue = tk.StringVar()
 		self.size = tk.StringVar()
 		self.style = tk.StringVar()
+  
 
  
  
@@ -35,6 +37,8 @@ class ScatterPlotAnalysis(BaseAnalysis):
 			plot_args["size"] = self.size.get()
 		if self.style.get():
 			plot_args["style"] = self.style.get()
+		if self.kind.get():
+			plot_args["kind"] = self.kind.get()
 		return plot_args
  
 	def show_scatter_plot(self, refresh_plot):
@@ -119,43 +123,26 @@ class ScatterPlotAnalysis(BaseAnalysis):
 		# Frame for plot arguments
 		self.plot_arguments_frame = tk.Frame(parent_frame)
 		self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
+		# Kind
+		self.kind_label = tk.Label(self.plot_arguments_frame, text="Kind:")
+		self.kind_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+		self.kind_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.kind)
+		self.kind_combobox.grid(row=0, column=1, padx=5, pady=5, sticky='w')
 		# Hue
 		self.hue_label = tk.Label(self.plot_arguments_frame, text="Hue:")
-		self.hue_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+		self.hue_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
 		self.hue_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.hue)
-		self.hue_combobox.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+		self.hue_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
 		# Size
 		self.size_label = tk.Label(self.plot_arguments_frame, text="Size:")
-		self.size_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+		self.size_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
 		self.size_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.size)
-		self.size_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+		self.size_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
 		# Style
 		self.style_label = tk.Label(self.plot_arguments_frame, text="Style:")
-		self.style_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
+		self.style_label.grid(row=3, column=0, padx=5, pady=5, sticky='w')
 		self.style_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.style)
-		self.style_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
-
-
-		run_button = tk.Button(self.plot_arguments_frame, text="Run Plot Code", command=self.execute_and_show_plot)
-		run_button.grid(row=3, column=0, padx=5, pady=5, sticky='w')
-		self.code_entry = tk.Text(self.plot_arguments_frame, height=10)
-		self.code_entry.grid(row=3, column=1, padx=5, pady=5, sticky='w')
-		self.code_entry.insert(tk.END, "# Schreiben Sie hier Ihren Code. \n# Stellen Sie sicher, dass das resultierende Figure-Objekt in einer Variablen namens 'fig' gespeichert wird.\n")
-		self.code_entry.insert(tk.END, "#For example:\n#import seaborn as sns\n#sns.set(style='darkgrid')\n#g=sns.jointplot(x=df['Age'],y=df['BMI'],data=df,kind='kde')\n#fig = g.fig\n#fig")
-
-
-	def execute_and_show_plot(self):
-		user_env = {"df": self.main_app.df}  # Hier ist das DataFrame, das Sie dem Benutzer zur Verfügung stellen
-		user_code = self.code_entry.get("1.0", tk.END)
-		fig = exec(user_code, user_env)
-  
-		if "fig" in user_env:
-			fig = user_env["fig"]
-			self.scatter_last_window, self.scatter_last_canvas = self.display_plot(fig, self.scatter_last_window, self.scatter_last_canvas)
-		else:
-			# Fehlerbehandlung, falls kein Figure-Objekt vorhanden ist
-			messagebox.showinfo("Error", "The code did not produce a 'fig' variable.")
-			print("Error: The code did not produce a 'fig' variable.")  
+		self.style_combobox.grid(row=3, column=1, padx=5, pady=5, sticky='w')
   
 
 	def toggle_plot_arguments_frame(self):
