@@ -15,8 +15,8 @@ class RelPlotAnalysis(BaseAnalysis):
 		self.title_y_axis = tk.StringVar()
 		self.plot_with = tk.StringVar()
 		self.plot_hight = tk.StringVar()
-		self.rel_last_window = None
-		self.rel_last_canvas = None
+		self.last_window = None
+		self.last_canvas = None
 
 		#plot_args
 		self.kind = tk.StringVar()
@@ -63,9 +63,9 @@ class RelPlotAnalysis(BaseAnalysis):
 			fig.subplots_adjust(top=0.94)
    
 			if refresh_plot:
-				self.rel_last_canvas = self.display_refresh_plot(fig, self.rel_last_canvas)
+				self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
 			else:
-				self.rel_last_window, self.rel_last_canvas = self.display_plot(fig, self.rel_last_window, self.rel_last_canvas)
+				self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
 		else:
 			messagebox.showinfo("Information", "Select two Columns")
 
