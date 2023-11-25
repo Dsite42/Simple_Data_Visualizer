@@ -10,10 +10,10 @@ def read_csv(file_path):
 		return None, str(e)
 
 def open_file(self):
-	#file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-	#if file_path:
-		#self.df, error = read_csv(file_path)
-		self.df = pd.read_csv("data.csv", sep=';')
+	file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+	if file_path:
+		#self.df, error = pd.read_csv(file_path)
+		self.df = pd.read_csv(file_path, sep=';')
 		#if error:
 		#	messagebox.showerror("Fehler beim Einlesen der Datei", error)
 		#else:

@@ -28,9 +28,9 @@ class RelPlotAnalysis(BaseAnalysis):
 
  
  
-	def create_plot_args(self):
+	def create_plot_args(self, data):
 		selected_columns = self.main_app.get_selected_columns()
-		plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": self.main_app.df}
+		plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": data}
 		if self.hue.get():
 			plot_args["hue"] = self.hue.get()
 		if self.size.get():
@@ -47,27 +47,72 @@ class RelPlotAnalysis(BaseAnalysis):
  
 	def show_rel_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		plot_args = self.create_plot_args()
-		if len(selected_columns) == 2:
-			# Create a Seaborn relational plot
-			g = sns.relplot(**plot_args)
-			if self.title_x_axis.get() != "":
-				g.set_axis_labels(x_var=self.title_x_axis.get())
-			if self.title_y_axis.get() != "":
-				g.set_axis_labels(y_var=self.title_y_axis.get())
-			
-			fig = g.fig
-			if self.plot_with.get() and self.plot_hight.get():
-				fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
-			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
-			fig.subplots_adjust(top=0.94)
-   
-			if refresh_plot:
-				self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
-			else:
-				self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
-		else:
+		if len(selected_columns) != 2:
 			messagebox.showinfo("Information", "Select two Columns")
+			return
+		plot_args = self.create_plot_args(self.main_app.df)
+		# Create a Seaborn relational plot
+		g = sns.relplot(**plot_args)
+		if self.title_x_axis.get() != "":
+			g.set_axis_labels(x_var=self.title_x_axis.get())
+		if self.title_y_axis.get() != "":
+			g.set_axis_labels(y_var=self.title_y_axis.get())
+		
+		fig = g.fig
+		if self.plot_with.get() and self.plot_hight.get():
+			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
+		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+		fig.subplots_adjust(top=0.94)
+
+		if refresh_plot:
+			self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
+		else:
+			self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
+
+		# Speichern der Achsen und der zugehörigen Facet-Titel
+		axes_facet_map = {}
+		for ax in g.axes.flatten():
+			facet_title = ax.get_title()
+			axes_facet_map[ax] = facet_title
+
+		def on_click(event):
+			ax_clicked = event.inaxes
+			if ax_clicked in axes_facet_map:
+				facet_title = axes_facet_map[ax_clicked]
+				splitted_facets = facet_title.split(" | ")
+				filtered_data = self.main_app.df.copy()
+			if splitted_facets != ['']:
+				for facet in splitted_facets:
+					column, value = facet.split(" = ")
+					value = int(value) if value.isdigit() else value
+					filtered_data = filtered_data[filtered_data[column] == value]
+			self.show_clicked_plot(False, filtered_data)
+
+		# add event-handeler
+		g.fig.canvas.mpl_connect('button_press_event', on_click)
+
+	def show_clicked_plot(self, refresh_plot, filtered_data):
+		selected_columns = self.main_app.get_selected_columns()
+		if len(selected_columns) != 2:
+			messagebox.showinfo("Information", "Select two Columns")
+			return
+		plot_args = self.create_plot_args(filtered_data)
+		g = sns.relplot(**plot_args)
+		if self.title_x_axis.get() != "":
+			g.set_axis_labels(x_var=self.title_x_axis.get())
+		if self.title_y_axis.get() != "":
+			g.set_axis_labels(y_var=self.title_y_axis.get())
+		
+		fig = g.fig
+		if self.plot_with.get() and self.plot_hight.get():
+			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
+		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+		fig.subplots_adjust(top=0.94)
+
+		if refresh_plot:
+			self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
+		else:
+			self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
 
 
 
