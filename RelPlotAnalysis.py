@@ -7,6 +7,9 @@ from BaseAnalysis import BaseAnalysis
 import seaborn as sns
 sns.set(style="darkgrid")
 
+import io
+from PIL import Image
+
 class RelPlotAnalysis(BaseAnalysis):
 	def __init__(self, main_app):
 		super().__init__()
@@ -73,6 +76,8 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
 		else:
 			self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
+
+
 
 		# Speichern der Achsen und der zugehörigen Facet-Titel
 		axes_facet_map = {}

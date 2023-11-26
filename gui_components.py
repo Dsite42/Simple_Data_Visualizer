@@ -9,8 +9,9 @@ from ManualPlotAnalysis import ManualPlotAnalysis
 
 class DataAnalysisApp:
 	# Constructor
-	def __init__(self, tk_root):
+	def __init__(self, tk_root, operating_system):
 		self.tk_root = tk_root
+		self.operating_system = operating_system
 		#tk_root.geometry("800x600")
 		tk_root.title("Einfaches Datenanalyse-Programm")
 
