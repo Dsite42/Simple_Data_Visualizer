@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -29,7 +30,7 @@ class RelPlotAnalysis(BaseAnalysis):
  
  
 	def create_plot_args(self, data):
-		selected_columns = self.main_app.get_selected_columns()
+		selected_columns = self.main_app.get_selected_columns()  
 		plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": data}
 		if self.hue.get():
 			plot_args["hue"] = self.hue.get()
@@ -46,6 +47,10 @@ class RelPlotAnalysis(BaseAnalysis):
 		return plot_args
  
 	def show_rel_plot(self, refresh_plot):
+		if self.main_app.datetime.get():
+			self.main_app.df[self.main_app.datetime.get()] = pd.to_datetime(self.main_app.df[self.main_app.datetime.get()], format='%d.%m.%Y')
+			data = self.main_app.df.set_index(self.main_app.datetime.get())
+
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) != 2:
 			messagebox.showinfo("Information", "Select two Columns")

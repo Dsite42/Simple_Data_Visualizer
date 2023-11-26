@@ -20,10 +20,19 @@ class DataAnalysisApp:
 		# Input_Data Frame
 		input_data_frame = tk.Frame(tk_root)
 		input_data_frame.pack(padx=5, pady=5)
-
 		# Button to open csv
 		open_button = tk.Button(input_data_frame, text="Open CSV file", command=lambda: open_file(self))
 		open_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+		# datetime index
+		datetime_index_frame = tk.Frame(tk_root)
+		datetime_index_frame.pack(padx=5, pady=5)
+		# set datetime index
+		self.datetime = tk.StringVar()
+		self.datetime_label = tk.Label(datetime_index_frame, text="Datetime index:")
+		self.datetime_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+		self.datetime_combobox = ttk.Combobox(datetime_index_frame, textvariable=self.datetime)
+		self.datetime_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
 
 		# Closing main window
 		tk_root.protocol("WM_DELETE_WINDOW", self.on_close)

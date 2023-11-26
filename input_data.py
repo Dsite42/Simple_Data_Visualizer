@@ -24,4 +24,5 @@ def open_file(self):
 		self.rel_analysis.style_combobox['values'] = list(self.df.columns)
 		self.rel_analysis.row_combobox['values'] = list(self.df.columns)
 		self.rel_analysis.col_combobox['values'] = list(self.df.columns)
+		self.datetime_combobox['values'] = list(self.df.columns)
 
