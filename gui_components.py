@@ -116,6 +116,7 @@ class DataAnalysisApp:
 		for widget in self.scrollable_frame.winfo_children():
 			widget.destroy()
 
+		self.columns_to_analyze = {}
 		for column in self.df.columns:
 			var = tk.BooleanVar()
 			checkbox = tk.Checkbutton(self.scrollable_frame, text=column, variable=var)
