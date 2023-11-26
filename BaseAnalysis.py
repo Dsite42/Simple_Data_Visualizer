@@ -49,8 +49,9 @@ class BaseAnalysis:
 		last_canvas.draw()
 		width = fig.get_figwidth() * fig.dpi
 		height = fig.get_figheight() * fig.dpi
-		self.last_window.geometry(f"{int(width)}x{int(height)}")
-		last_canvas.get_tk_widget().pack()
+		additional_row_height = 50
+		self.last_window.geometry(f"{int(width)}x{int(height + additional_row_height)}")
+		last_canvas.get_tk_widget().grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
 		return last_canvas
 
 	def save_plot(self, fig):
