@@ -4,7 +4,7 @@ from gui_components import DataAnalysisApp
 
 
 def main():
-	operating_system= check_os()
+	operating_system = check_os()
 	print("OS: ", operating_system)
 	tk_root = tk.Tk()
 	app = DataAnalysisApp(tk_root, operating_system)
@@ -16,6 +16,8 @@ def check_os():
 		return "Windows"
 	elif os_name == 'Linux':
 		return "Linux"
+	elif os_name == 'Darwin':
+		return "Darwin"
 	else:
 		return "Anderes Betriebssystem"
 

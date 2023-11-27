@@ -20,26 +20,6 @@ class BaseAnalysis:
 		last_canvas = FigureCanvasTkAgg(fig, master=last_window)
 		last_canvas.draw()
 		last_canvas.get_tk_widget().grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
-  
-		## Den Plot als Bild in einen BytesIO-Buffer speichern
-		#buf = io.BytesIO()
-		#plt.savefig(buf, format='png')
-		#buf.seek(0)
-#
-		## Das Bild aus dem Buffer in die Zwischenablage kopieren
-		#image = Image.open(buf)
-		#output = io.BytesIO()
-		#image.convert("RGB").save(output, "BMP")
-		#data = output.getvalue()[14:]
-		#output.close()
-#
-		#win32clipboard.OpenClipboard()
-		#win32clipboard.EmptyClipboard()
-		#win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
-		#win32clipboard.CloseClipboard()
-#
-		#buf.close()
-
 		return last_window, last_canvas
 
 	def display_refresh_plot(self, fig, last_canvas):
@@ -104,4 +84,27 @@ class BaseAnalysis:
 			process = subprocess.Popen(['xclip', '-selection', 'clipboard', '-t', 'image/png', '-i'], stdin=subprocess.PIPE)
 			process.communicate(input=buf.getvalue())
 
+			buf.close()
+
+		if self.main_app.operating_system == "Darwin":
+			import io
+			import os
+			from PIL import Image
+			import subprocess
+
+			# Speichern des Plots in einem BytesIO-Buffer
+			buf = io.BytesIO()
+			fig.savefig(buf, format='png')
+			buf.seek(0)
+			img = Image.open(buf)
+
+			# Speichern des Bildes in einer temporären Datei
+			temp_path = "/tmp/temp_plot.png"
+			img.save(temp_path, "PNG")
+
+			# Kopieren des Bildes in die Zwischenablage mit macOS-Befehlen
+			subprocess.run(["osascript", "-e", f'set the clipboard to (read (POSIX file "{temp_path}") as JPEG picture)'])
+
+			# Löschen der temporären Datei
+			os.remove(temp_path)
 			buf.close()
