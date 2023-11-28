@@ -1,11 +1,10 @@
 import tkinter as tk
 import platform
-from gui_components import DataAnalysisApp
+from DataAnalysisApp import DataAnalysisApp
 
 
 def main():
 	operating_system = check_os()
-	print("OS: ", operating_system)
 	tk_root = tk.Tk()
 	app = DataAnalysisApp(tk_root, operating_system)
 	tk_root.mainloop()

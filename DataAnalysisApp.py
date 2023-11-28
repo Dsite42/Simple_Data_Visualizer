@@ -14,6 +14,11 @@ class DataAnalysisApp:
 		self.operating_system = operating_system
 		#tk_root.geometry("800x600")
 		tk_root.title("Einfaches Datenanalyse-Programm")
+		print("OS: ", self.operating_system)
+  
+		# Open Windows
+		self.open_windows = []
+
 
 		self.columns_to_analyze = {}
 		self.df = None

@@ -73,9 +73,9 @@ class RelPlotAnalysis(BaseAnalysis):
 		fig.subplots_adjust(top=0.94)
 
 		if refresh_plot:
-			self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
+			self.display_refresh_plot(fig)
 		else:
-			self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
+			self.main_app.open_windows.append(self.display_plot(fig))
 
 
 
@@ -120,9 +120,9 @@ class RelPlotAnalysis(BaseAnalysis):
 		fig.subplots_adjust(top=0.94)
 
 		if refresh_plot:
-			self.last_canvas = self.display_refresh_plot(fig, self.last_canvas)
+			self.display_refresh_plot(fig)
 		else:
-			self.last_window, self.last_canvas = self.display_plot(fig, self.last_window, self.last_canvas)
+			self.main_app.open_windows.append(self.display_plot(fig))
 
 
 
