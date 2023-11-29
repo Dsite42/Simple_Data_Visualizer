@@ -24,7 +24,10 @@ class PlotWindow:
         save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
         copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.fig))
-        copy_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+        copy_button.grid(row=0, column=0, padx=100, pady=5, sticky='w')
+        
+        set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
+        set_refresh_button.grid(row=0, column=0, padx=200, pady=5, sticky='w')
 
     def on_close(self):
         if self.fig:
@@ -53,7 +56,12 @@ class PlotWindow:
             plt.close(self.fig)
 
         self.display_plot(new_fig)
-        
+    
+    def set_refresh(self):
+        if self in self.main_app.open_windows:
+            self.main_app.open_windows.remove(self)
+            self.main_app.open_windows.append(self)
+            print("Refresh set")
         
     def save_plot(self):
         plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
