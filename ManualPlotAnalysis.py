@@ -56,9 +56,10 @@ class ManualPlotAnalysis(BaseAnalysis):
 		if "fig" in user_env:
 			fig = user_env["fig"]
 			if refresh_plot:
-				self.scatter_last_canvas = self.display_refresh_plot(fig, self.scatter_last_canvas)
+				self.main_app.open_windows[-1].refresh_plot(fig)
 			else:
-				self.scatter_last_window, self.scatter_last_canvas = self.display_plot(fig, self.scatter_last_window, self.scatter_last_canvas)
+				self.main_app.open_windows.append(self.display_plot(fig))
+
 		else:
 			# Fehlerbehandlung, falls kein Figure-Objekt vorhanden ist
 			messagebox.showinfo("Error", "The code did not produce a 'fig' variable.")
