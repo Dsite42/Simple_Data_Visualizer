@@ -66,20 +66,18 @@ class DataAnalysisApp:
 		self.columns_scrollbar.pack(side="right", fill="y")
 
 
-
-
 		# Erstellen von Tabs für verschiedene Analysen
 		self.current_tab = None
 		self.tab_control = ttk.Notebook(tk_root)
-		self.rel_tab = ttk.Frame(self.tab_control)
+		self.rel_tab_frame = ttk.Frame(self.tab_control)
 		self.histogram_tab = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
-		self.manual_plot_tab = ttk.Frame(self.tab_control)
+		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 
-		self.tab_control.add(self.rel_tab, text='Rel Plot')
+		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
 		self.tab_control.add(self.histogram_tab, text='Histogramm')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
-		self.tab_control.add(self.manual_plot_tab, text='Manual Plot')
+		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
   
 		self.tab_control.pack(expand=1, fill="both")
   
@@ -103,7 +101,7 @@ class DataAnalysisApp:
 				self.manual_plot_analysis.save_code_text()
 
 		if tab_text == "Rel Plot":
-			self.rel_analysis.init_ui(self.rel_tab)
+			self.rel_analysis.init_ui()
 		elif tab_text == "Histogramm":
 			if self.histogram_analysis is None:
 				self.histogram_analysis = HistogramAnalysis(self)
@@ -115,7 +113,7 @@ class DataAnalysisApp:
 		elif tab_text == "Manual Plot":
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
-			self.manual_plot_analysis.init_ui(self.manual_plot_tab)
+			self.manual_plot_analysis.init_ui()
 		self.current_tab = tab_text
 
 	def update_column_checklist(self):

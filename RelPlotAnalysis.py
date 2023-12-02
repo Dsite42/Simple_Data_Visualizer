@@ -127,14 +127,15 @@ class RelPlotAnalysis(BaseAnalysis):
 
 
 
-	def init_ui(self, parent_frame):
+	def init_ui(self):
 		self.plot_arguments_frame_visible = True
 		# Zuvor erstellte Widgets im parent_frame entfernen
-		for widget in parent_frame.winfo_children():
+		for widget in self.main_app.rel_tab_frame.winfo_children():
 			widget.destroy()
    
+
 		# Frame für den Button
-		button_frame = tk.Frame(parent_frame)
+		button_frame = tk.Frame(self.main_app.rel_tab_frame)
 		button_frame.pack(padx=5, pady=5, anchor='c')
 
 		# Button zum Anzeigen des Rel Plots
@@ -151,7 +152,7 @@ class RelPlotAnalysis(BaseAnalysis):
 
 
 		# Frame for main plot args
-		main_plot_arguments_frame = tk.Frame(parent_frame)
+		main_plot_arguments_frame = tk.Frame(self.main_app.rel_tab_frame)
 		main_plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
 		# Eingabefeld für den Titel des Rel Plots
 		title_label = tk.Label(main_plot_arguments_frame, text="Plot title:")
@@ -180,7 +181,7 @@ class RelPlotAnalysis(BaseAnalysis):
 		plot_hight_entry.grid(row=4, column=1, padx=5)
 
 		# Frame for plot arguments
-		self.plot_arguments_frame = tk.Frame(parent_frame)
+		self.plot_arguments_frame = tk.Frame(self.main_app.rel_tab_frame)
 		self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
 		# Kind
 		self.kind_label = tk.Label(self.plot_arguments_frame, text="Kind:")
@@ -212,6 +213,18 @@ class RelPlotAnalysis(BaseAnalysis):
 		self.col_label.grid(row=5, column=0, padx=5, pady=5, sticky='w')
 		self.col_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.col)
 		self.col_combobox.grid(row=5, column=1, padx=5, pady=5, sticky='w')
+  
+		self.load_argument_values()
+
+
+	def load_argument_values(self):
+		if self.main_app.df is not None:
+			self.main_app.rel_analysis.kind_combobox['values'] = ['scatter', 'line']
+			self.main_app.rel_analysis.hue_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.rel_analysis.size_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.rel_analysis.style_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.rel_analysis.row_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.rel_analysis.col_combobox['values'] = list(self.main_app.df.columns)
 
   
 

@@ -25,13 +25,13 @@ class ManualPlotAnalysis(BaseAnalysis):
 			"#fig = g.fig\n"
 		) 
  
-	def init_ui(self, parent_frame):
+	def init_ui(self):
 		# Zuvor erstellte Widgets im parent_frame entfernen
-		for widget in parent_frame.winfo_children():
+		for widget in self.main_app.manual_plot_tab_frame.winfo_children():
 			widget.destroy()
    
 		# Frame für den Button
-		button_frame = tk.Frame(parent_frame)
+		button_frame = tk.Frame(self.main_app.manual_plot_tab_frame)
 		button_frame.pack(padx=5, pady=5, anchor='w')
 
 		# Button zum Anzeigen des Scatter Plots

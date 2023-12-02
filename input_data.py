@@ -18,11 +18,7 @@ def open_file(self):
 		#	messagebox.showerror("Fehler beim Einlesen der Datei", error)
 		#else:
 		self.update_column_checklist()
-		self.rel_analysis.kind_combobox['values'] = ['scatter', 'line']
-		self.rel_analysis.hue_combobox['values'] = list(self.df.columns)
-		self.rel_analysis.size_combobox['values'] = list(self.df.columns)
-		self.rel_analysis.style_combobox['values'] = list(self.df.columns)
-		self.rel_analysis.row_combobox['values'] = list(self.df.columns)
-		self.rel_analysis.col_combobox['values'] = list(self.df.columns)
+		self.rel_analysis.load_argument_values()
+
 		self.datetime_combobox['values'] = list(self.df.columns)
 
