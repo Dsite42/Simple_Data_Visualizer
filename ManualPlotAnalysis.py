@@ -7,13 +7,6 @@ class ManualPlotAnalysis(BaseAnalysis):
 		super().__init__()
 		self.main_app = main_app
 		self.plot_title = tk.StringVar(value = "Manual Plot")
-		self.scatter_last_window = None
-		self.scatter_last_canvas = None
-
-		#plot_args
-		self.hue = tk.StringVar()
-		self.size = tk.StringVar()
-		self.style = tk.StringVar()
 
 		self.code_entry_text = (
 			"#Schreiben Sie hier Ihren Code. \n"
@@ -26,23 +19,17 @@ class ManualPlotAnalysis(BaseAnalysis):
 		) 
  
 	def init_ui(self):
-		# Zuvor erstellte Widgets im parent_frame entfernen
+		# Remove previously created widgets in the parent_frame
 		for widget in self.main_app.manual_plot_tab_frame.winfo_children():
 			widget.destroy()
    
-		# Frame für den Button
+		# Frame for Buttons and Code Entry
 		button_frame = tk.Frame(self.main_app.manual_plot_tab_frame)
 		button_frame.pack(padx=5, pady=5, anchor='w')
-
-		# Button zum Anzeigen des Scatter Plots
 		show_plot_button = tk.Button(button_frame, text="Show Plot", command=lambda: self.execute_and_show_plot(False))
 		show_plot_button.grid(row=0, column=0, padx=5, sticky='w')
-  
-		# Button zum Erneuern des Scatter Plots
 		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.execute_and_show_plot(True))
 		show_plot_button.grid(row=0, column=0, padx=110, sticky='w')
-
-
 
 		self.code_entry = tk.Text(button_frame, height=10)
 		self.code_entry.grid(row=1, column=0, padx=5, pady=5, sticky='w')
