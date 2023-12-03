@@ -6,6 +6,8 @@ from tkinter import ttk
 
 from RelPlotAnalysis import RelPlotAnalysis
 from ManualPlotAnalysis import ManualPlotAnalysis
+from ConsoleOutput import ConsoleOutput
+import sys
 
 class DataAnalysisApp:
 	# Constructor
@@ -73,11 +75,13 @@ class DataAnalysisApp:
 		self.histogram_tab = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
+		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
 		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
 		self.tab_control.add(self.histogram_tab, text='Histogramm')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
+		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
   
 		self.tab_control.pack(expand=1, fill="both")
   
@@ -86,8 +90,11 @@ class DataAnalysisApp:
 		self.histogram_analysis = None  # Erstellen Sie hier das Histogramm-Analyseobjekt
 		self.line_chart_analysis = None  # Erstellen Sie hier das Liniendiagramm-Analyseobjekt
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
+		self.console_output = ConsoleOutput(self)
+		sys.stdout = self.console_output
+		sys.stderr = self.console_output
 
-
+        
 		# Event-Handler für Tabwechsel
 		self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
@@ -97,8 +104,8 @@ class DataAnalysisApp:
 		tab_text = event.widget.tab(selected_tab, "text")
 
 		if self.current_tab == "Manual Plot":
-			if self.manual_plot_analysis is not None:
-				self.manual_plot_analysis.save_code_text()
+			#if self.manual_plot_analysis is not None:
+			self.manual_plot_analysis.save_code_text()
 
 		if tab_text == "Rel Plot":
 			self.rel_analysis.init_ui()
@@ -114,6 +121,7 @@ class DataAnalysisApp:
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
 			self.manual_plot_analysis.init_ui()
+
 		self.current_tab = tab_text
 
 	def update_column_checklist(self):
