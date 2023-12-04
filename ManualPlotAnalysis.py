@@ -31,7 +31,7 @@ class ManualPlotAnalysis(BaseAnalysis):
 		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.execute_and_show_plot(True))
 		show_plot_button.grid(row=0, column=0, padx=110, sticky='w')
 
-		self.code_entry = tk.Text(button_frame, height=10)
+		self.code_entry = tk.Text(button_frame, height=20)
 		self.code_entry.grid(row=1, column=0, padx=5, pady=5, sticky='w')
 		self.code_entry.insert(tk.END, self.code_entry_text)
 
