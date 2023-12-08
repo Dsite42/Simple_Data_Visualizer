@@ -21,4 +21,4 @@ def open_file(self):
 		self.rel_analysis.load_argument_values()
 
 		self.datetime_combobox['values'] = list(self.df.columns)
-
+  

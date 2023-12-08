@@ -7,6 +7,7 @@ from tkinter import ttk
 from RelPlotAnalysis import RelPlotAnalysis
 from ManualPlotAnalysis import ManualPlotAnalysis
 from ConsoleOutput import ConsoleOutput
+from ManipulateDataWindow import ManipulateDataWindow
 import sys
 
 class DataAnalysisApp:
@@ -31,6 +32,10 @@ class DataAnalysisApp:
 		# Button to open csv
 		open_button = tk.Button(input_data_frame, text="Open CSV file", command=lambda: open_file(self))
 		open_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+		# Button for data manipulation
+		data_manipulation_button = tk.Button(input_data_frame, text="Manipulate Data", command=lambda: ManipulateDataWindow(self))
+		data_manipulation_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
 		# datetime index
 		datetime_index_frame = tk.Frame(tk_root)
