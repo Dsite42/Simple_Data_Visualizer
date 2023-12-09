@@ -65,21 +65,36 @@ class ManipulateDataWindow:
 
 
 		# Frame for data maipulation
-        self.data_maipulation_frame = tk.Frame(self.window)
-        self.data_maipulation_frame.grid(row=2, column=0, padx=5, pady=5, sticky='nsew')
+        self.data_manipulation_frame = tk.Frame(self.window)
+        self.data_manipulation_frame.grid(row=2, column=0, padx=5, pady=5, sticky='nsew')
         
-        # Delete column
-        self.delete_column_combobox = ttk.Combobox(self.data_maipulation_frame, values=list(self.main_app.df.columns))
-        self.delete_column_combobox.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-        delete_column_button = tk.Button(self.data_maipulation_frame, text="Delete Column", command=lambda: self.delete_column())
-        delete_column_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
-        
-        
+        # Dropdown-Menü für die Auswahl von Spalten
+        self.delete_columns_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
+        self.delete_columns_menubutton.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+        self.column_menu = tk.Menu(self.delete_columns_menubutton, tearoff=False)
+        self.delete_columns_menubutton['menu'] = self.column_menu
 
-    def delete_column(self):
-        column_name = self.delete_column_combobox.get()
-        self.main_app.df = self.main_app.df.drop(column_name, axis=1)
+        self.column_vars = {}
+        for col in self.main_app.df.columns:
+            self.column_vars[col] = tk.BooleanVar()
+            self.column_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+
+        # Schaltfläche zum Löschen ausgewählter Spalten
+        self.delete_columns_button = tk.Button(self.data_manipulation_frame, text="Delete columns", command=self.delete_columns)
+        self.delete_columns_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+
+        
+    def delete_columns(self):
+        selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+        self.main_app.df.drop(selected_columns, axis=1, inplace=True)
         self.refresh_treeview()
+        self.update_column_select_menu()
+
+    def update_column_select_menu(self):
+        self.column_menu.delete(0, tk.END)
+        for col in self.main_app.df.columns:
+            self.column_vars[col] = tk.BooleanVar()
+            self.column_menu.add_checkbutton(label=col, variable=self.column_vars[col])
   
     def refresh_treeview(self):
         # Löschen aller Daten im Treeview
@@ -101,9 +116,6 @@ class ManipulateDataWindow:
         for index, row in self.main_app.df.iterrows():
             self.data_treeview.insert("", tk.END, values=list(row))
 
-        # Aktualisieren der Combobox mit den neuen Spaltennamen
-        self.delete_column_combobox['values'] = list(self.main_app.df.columns)
-        
         self.main_app.update_column_checklist()
 
 
