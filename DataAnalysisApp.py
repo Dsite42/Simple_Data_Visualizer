@@ -15,7 +15,7 @@ class DataAnalysisApp:
 	def __init__(self, tk_root, operating_system):
 		self.tk_root = tk_root
 		self.operating_system = operating_system
-		#tk_root.geometry("800x600")
+		#tk_root.geometry("400x800")
 		tk_root.title("Einfaches Datenanalyse-Programm")
 		print("OS: ", self.operating_system)
   
