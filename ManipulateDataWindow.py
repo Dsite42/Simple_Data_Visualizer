@@ -127,15 +127,27 @@ class ManipulateDataWindow:
 
 		# Fill menu buttons
 		self.column_vars = {}
+		self.selected_columns_order = []
 		for col in self.main_app.df.columns:
-			self.column_vars[col] = tk.BooleanVar()
-			self.delete_columns_menu.add_checkbutton(label=col, variable=self.column_vars[col])
-			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+			boolean_var = tk.BooleanVar()
+			self.column_vars[col] = boolean_var
+			self.delete_columns_menu.add_checkbutton(label=col, variable=boolean_var)
+			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
 
 
+	def on_checkbutton_toggle(self, column_name):
+		if self.column_vars[column_name].get():
+			# Wenn der Checkbutton aktiviert wurde, fügen Sie den Spaltennamen der Liste hinzu
+			if column_name not in self.selected_columns_order:
+				self.selected_columns_order.append(column_name)
+		else:
+			# Wenn der Checkbutton deaktiviert wurde, entfernen Sie den Spaltennamen aus der Liste
+			if column_name in self.selected_columns_order:
+				self.selected_columns_order.remove(column_name)
+	
 
 	def division_and_multiplication(self):
-		selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+		selected_columns = self.selected_columns_order#[col for col, var in self.column_vars.items() if var.get()]
 		if self.division_and_multiplication_combobox.get() and self.division_and_multiplication_entry_var.get() and selected_columns:
 			try:
 				if self.division_and_multiplication_combobox.get() == '*':
@@ -187,10 +199,12 @@ class ManipulateDataWindow:
 		self.delete_columns_menu.delete(0, tk.END)
 		self.division_and_multiplication_menu.delete(0, tk.END)
 		self.column_vars = {}
+		self.selected_columns_order = []
 		for col in self.main_app.df.columns:
-			self.column_vars[col] = tk.BooleanVar()
-			self.delete_columns_menu.add_checkbutton(label=col, variable=self.column_vars[col])
-			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+			boolean_var = tk.BooleanVar()
+			self.column_vars[col] = boolean_var
+			self.delete_columns_menu.add_checkbutton(label=col, variable=boolean_var)
+			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
    
 	def update_datetime_combobox(self):
 		self.datetime_combobox['values'] = list(self.main_app.df.columns)
