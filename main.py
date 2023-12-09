@@ -6,9 +6,9 @@ from DataAnalysisApp import DataAnalysisApp
 def main():
 	operating_system = check_os()
 	tk_root = tk.Tk()
-	# set the scaling
-	scale_factor = 1.0
-	tk_root.tk.call('tk', 'scaling', scale_factor)
+	## set the scaling
+	#scale_factor = 1.0
+	#tk_root.tk.call('tk', 'scaling', scale_factor)
 	app = DataAnalysisApp(tk_root, operating_system)
 	tk_root.mainloop()
 
