@@ -17,7 +17,7 @@ class ManipulateDataWindow:
 	def create_window(self):
 		self.window = tk.Toplevel(self.main_app.tk_root)
 		self.window.title("Manipulate Data")
-		self.window.maxsize(800, 600)
+		self.window.maxsize(1200, 800)
 
 		# Bind the close event
 		self.window.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -75,13 +75,8 @@ class ManipulateDataWindow:
 		# Dropdown-Menü für die Auswahl von Spalten
 		self.delete_columns_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
 		self.delete_columns_menubutton.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-		self.column_menu = tk.Menu(self.delete_columns_menubutton, tearoff=False)
-		self.delete_columns_menubutton['menu'] = self.column_menu
-
-		self.column_vars = {}
-		for col in self.main_app.df.columns:
-			self.column_vars[col] = tk.BooleanVar()
-			self.column_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+		self.delete_columns_menu = tk.Menu(self.delete_columns_menubutton, tearoff=False)
+		self.delete_columns_menubutton['menu'] = self.delete_columns_menu
 
 		# Schaltfläche zum Löschen ausgewählter Spalten
 		self.delete_columns_button = tk.Button(self.data_manipulation_frame, text="Delete columns", command=self.delete_columns)
@@ -110,8 +105,53 @@ class ManipulateDataWindow:
 		# Button to reset datetime index
 		self.reset_datetime_index_button = tk.Button(self.data_manipulation_frame, text="Reset", command=self.reset_datetime_index)
 		self.reset_datetime_index_button.grid(row=1, column=5, padx=5, pady=5, sticky='w')
+
+
+		# Devision and multiplication
+		self.division_and_multiplication_label = tk.Label(self.data_manipulation_frame, text="New column:")
+		self.division_and_multiplication_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
+		self.division_and_multiplication_entry_var = tk.StringVar()
+		self.division_and_multiplication_entry = tk.Entry(self.data_manipulation_frame, textvariable=self.division_and_multiplication_entry_var)
+		self.division_and_multiplication_entry.grid(row=2, column=1, padx=5, pady=5, sticky='w')
+		self.division_and_multiplication_combobox = ttk.Combobox(self.data_manipulation_frame, values=['*', '/'], state="readonly")
+		self.division_and_multiplication_combobox.grid(row=2, column=2, padx=5, pady=5, sticky='w')
   
+		self.division_and_multiplication_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
+		self.division_and_multiplication_menubutton.grid(row=2, column=3, padx=5, pady=5, sticky='w')
+		self.division_and_multiplication_menu = tk.Menu(self.division_and_multiplication_menubutton, tearoff=False)
+		self.division_and_multiplication_menubutton['menu'] = self.division_and_multiplication_menu
   
+		self.division_and_multiplication_button = tk.Button(self.data_manipulation_frame, text="Create", command=self.division_and_multiplication)
+		self.division_and_multiplication_button.grid(row=2, column=4, padx=5, pady=5, sticky='w')
+
+
+		# Fill menu buttons
+		self.column_vars = {}
+		for col in self.main_app.df.columns:
+			self.column_vars[col] = tk.BooleanVar()
+			self.delete_columns_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+
+
+
+	def division_and_multiplication(self):
+		selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+		if self.division_and_multiplication_combobox.get() and self.division_and_multiplication_entry_var.get() and selected_columns:
+			try:
+				if self.division_and_multiplication_combobox.get() == '*':
+					self.main_app.df[self.division_and_multiplication_entry_var.get()] = self.main_app.df[selected_columns].prod(axis=1)
+				elif self.division_and_multiplication_combobox.get() == '/':
+					division_result = self.main_app.df[selected_columns[0]]
+					for col in selected_columns[1:]:
+						division_result = division_result.div(self.main_app.df[col])
+					self.main_app.df[self.division_and_multiplication_entry_var.get()] = division_result
+			except Exception as e:
+				messagebox.showerror("Fehler", f"Fehler bei der Berechnung: {e}")
+			self.refresh_treeview()
+			self.update_column_select_menu()
+			self.update_datetime_combobox()
+		else:
+			messagebox.showinfo("Information", "Bitte Spalten auswählen und einen Spaltennamen eingeben")
   
 	def set_datetime_index(self):
 		column_name = self.datetime_combobox.get()	
@@ -144,10 +184,13 @@ class ManipulateDataWindow:
 		self.update_datetime_combobox()
 
 	def update_column_select_menu(self):
-		self.column_menu.delete(0, tk.END)
+		self.delete_columns_menu.delete(0, tk.END)
+		self.division_and_multiplication_menu.delete(0, tk.END)
+		self.column_vars = {}
 		for col in self.main_app.df.columns:
 			self.column_vars[col] = tk.BooleanVar()
-			self.column_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+			self.delete_columns_menu.add_checkbutton(label=col, variable=self.column_vars[col])
+			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=self.column_vars[col])
    
 	def update_datetime_combobox(self):
 		self.datetime_combobox['values'] = list(self.main_app.df.columns)
@@ -164,7 +207,6 @@ class ManipulateDataWindow:
 			self.data_treeview.column(col, width=0, minwidth=0, stretch=False)
 	
 		# Aktualisieren der Spalten im Treeview basierend auf dem DataFrame
-  
 		self.treeview_columns = ["Index"] + list(self.main_app.df.columns)
 		self.data_treeview["columns"] = list(self.treeview_columns)
 		for col in self.treeview_columns:
