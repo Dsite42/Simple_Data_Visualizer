@@ -50,10 +50,6 @@ class RelPlotAnalysis(BaseAnalysis):
 		return plot_args
  
 	def show_rel_plot(self, refresh_plot):
-		if self.main_app.datetime.get():
-			self.main_app.df[self.main_app.datetime.get()] = pd.to_datetime(self.main_app.df[self.main_app.datetime.get()], format='%d.%m.%Y')
-			data = self.main_app.df.set_index(self.main_app.datetime.get())
-
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) != 2:
 			messagebox.showinfo("Information", "Select two Columns")

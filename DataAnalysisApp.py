@@ -37,15 +37,16 @@ class DataAnalysisApp:
 		data_manipulation_button = tk.Button(input_data_frame, text="Manipulate Data", command=lambda: ManipulateDataWindow(self))
 		data_manipulation_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
-		# datetime index
-		datetime_index_frame = tk.Frame(tk_root)
-		datetime_index_frame.pack(padx=5, pady=5)
-		# set datetime index
-		self.datetime = tk.StringVar()
-		self.datetime_label = tk.Label(datetime_index_frame, text="Datetime index:")
-		self.datetime_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
-		self.datetime_combobox = ttk.Combobox(datetime_index_frame, textvariable=self.datetime)
-		self.datetime_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+		# dataframes
+		dataframes_frame = tk.Frame(tk_root)
+		dataframes_frame.pack(padx=5, pady=5)
+		# set dataframe index
+		self.dataframes = {}
+		self.dataframes_label = tk.Label(dataframes_frame, text="Dataframes:")
+		self.dataframes_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+		self.dataframes_combobox = ttk.Combobox(dataframes_frame)
+		self.dataframes_combobox.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+		self.dataframes_combobox.bind("<<ComboboxSelected>>", self.on_dataframe_selected)
 
 		# Closing main window
 		tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -129,12 +130,19 @@ class DataAnalysisApp:
 
 		self.current_tab = tab_text
 
+
+
+	def on_dataframe_selected(self, event=None):
+		self.df = self.dataframes[self.dataframes_combobox.get()]
+		self.update_column_checklist()
+		self.rel_analysis.load_argument_values()
+
 	def update_column_checklist(self):
 		for widget in self.scrollable_frame.winfo_children():
 			widget.destroy()
 
 		self.columns_to_analyze = {}
-		for column in self.df.columns:
+		for column in self.dataframes[self.dataframes_combobox.get()].columns:
 			var = tk.BooleanVar()
 			checkbox = tk.Checkbutton(self.scrollable_frame, text=column, variable=var)
 			checkbox.pack(anchor='w')

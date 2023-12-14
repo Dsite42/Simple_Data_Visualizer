@@ -9,6 +9,7 @@ from tkinter import filedialog
 class ManipulateDataWindow:
 	def __init__(self, main_app):
 		self.main_app = main_app
+		self.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
 		self.fig = None
 		self.canvas = None
 		self.window = None
@@ -239,7 +240,7 @@ class ManipulateDataWindow:
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
 		
-		self.main_app.update_column_checklist()
+		self.main_app.on_dataframe_selected()
 
 
 	def on_close(self):
