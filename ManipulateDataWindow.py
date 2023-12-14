@@ -108,21 +108,21 @@ class ManipulateDataWindow:
 
 
 		# Devision and multiplication
-		self.division_and_multiplication_label = tk.Label(self.data_manipulation_frame, text="New column:")
-		self.division_and_multiplication_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
-		self.division_and_multiplication_entry_var = tk.StringVar()
-		self.division_and_multiplication_entry = tk.Entry(self.data_manipulation_frame, textvariable=self.division_and_multiplication_entry_var)
-		self.division_and_multiplication_entry.grid(row=2, column=1, padx=5, pady=5, sticky='w')
-		self.division_and_multiplication_combobox = ttk.Combobox(self.data_manipulation_frame, values=['*', '/'], state="readonly")
-		self.division_and_multiplication_combobox.grid(row=2, column=2, padx=5, pady=5, sticky='w')
+		self.basic_arithmetical_operations_label = tk.Label(self.data_manipulation_frame, text="New column:")
+		self.basic_arithmetical_operations_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
+		self.basic_arithmetical_operations_entry_var = tk.StringVar()
+		self.basic_arithmetical_operations_entry = tk.Entry(self.data_manipulation_frame, textvariable=self.basic_arithmetical_operations_entry_var)
+		self.basic_arithmetical_operations_entry.grid(row=2, column=1, padx=5, pady=5, sticky='w')
+		self.basic_arithmetical_operations_combobox = ttk.Combobox(self.data_manipulation_frame, values=['+', '-', '*', '/'], state="readonly")
+		self.basic_arithmetical_operations_combobox.grid(row=2, column=2, padx=5, pady=5, sticky='w')
   
-		self.division_and_multiplication_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
-		self.division_and_multiplication_menubutton.grid(row=2, column=3, padx=5, pady=5, sticky='w')
-		self.division_and_multiplication_menu = tk.Menu(self.division_and_multiplication_menubutton, tearoff=False)
-		self.division_and_multiplication_menubutton['menu'] = self.division_and_multiplication_menu
+		self.basic_arithmetical_operations_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
+		self.basic_arithmetical_operations_menubutton.grid(row=2, column=3, padx=5, pady=5, sticky='w')
+		self.basic_arithmetical_operations_menu = tk.Menu(self.basic_arithmetical_operations_menubutton, tearoff=False)
+		self.basic_arithmetical_operations_menubutton['menu'] = self.basic_arithmetical_operations_menu
   
-		self.division_and_multiplication_button = tk.Button(self.data_manipulation_frame, text="Create", command=self.division_and_multiplication)
-		self.division_and_multiplication_button.grid(row=2, column=4, padx=5, pady=5, sticky='w')
+		self.basic_arithmetical_operations_button = tk.Button(self.data_manipulation_frame, text="Create", command=self.basic_arithmetical_operations)
+		self.basic_arithmetical_operations_button.grid(row=2, column=4, padx=5, pady=5, sticky='w')
 
 
 		# Fill menu buttons
@@ -132,7 +132,7 @@ class ManipulateDataWindow:
 			boolean_var = tk.BooleanVar()
 			self.column_vars[col] = boolean_var
 			self.delete_columns_menu.add_checkbutton(label=col, variable=boolean_var)
-			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
+			self.basic_arithmetical_operations_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
 
 
 	def on_checkbutton_toggle(self, column_name):
@@ -146,17 +146,24 @@ class ManipulateDataWindow:
 				self.selected_columns_order.remove(column_name)
 	
 
-	def division_and_multiplication(self):
+	def basic_arithmetical_operations(self):
 		selected_columns = self.selected_columns_order#[col for col, var in self.column_vars.items() if var.get()]
-		if self.division_and_multiplication_combobox.get() and self.division_and_multiplication_entry_var.get() and selected_columns:
+		if self.basic_arithmetical_operations_combobox.get() and self.basic_arithmetical_operations_entry_var.get() and selected_columns:
 			try:
-				if self.division_and_multiplication_combobox.get() == '*':
-					self.main_app.df[self.division_and_multiplication_entry_var.get()] = self.main_app.df[selected_columns].prod(axis=1)
-				elif self.division_and_multiplication_combobox.get() == '/':
+				if self.basic_arithmetical_operations_combobox.get() == '+':
+					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = self.main_app.df[selected_columns].sum(axis=1)
+				elif self.basic_arithmetical_operations_combobox.get() == '-':
+					subtration_result = self.main_app.df[selected_columns[0]]
+					for col in selected_columns[1:]:
+						subtration_result = subtration_result.sub(self.main_app.df[col])
+					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = subtration_result
+				elif self.basic_arithmetical_operations_combobox.get() == '*':
+					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = self.main_app.df[selected_columns].prod(axis=1)
+				elif self.basic_arithmetical_operations_combobox.get() == '/':
 					division_result = self.main_app.df[selected_columns[0]]
 					for col in selected_columns[1:]:
 						division_result = division_result.div(self.main_app.df[col])
-					self.main_app.df[self.division_and_multiplication_entry_var.get()] = division_result
+					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = division_result
 			except Exception as e:
 				messagebox.showerror("Fehler", f"Fehler bei der Berechnung: {e}")
 			self.refresh_treeview()
@@ -197,14 +204,14 @@ class ManipulateDataWindow:
 
 	def update_column_select_menu(self):
 		self.delete_columns_menu.delete(0, tk.END)
-		self.division_and_multiplication_menu.delete(0, tk.END)
+		self.basic_arithmetical_operations_menu.delete(0, tk.END)
 		self.column_vars = {}
 		self.selected_columns_order = []
 		for col in self.main_app.df.columns:
 			boolean_var = tk.BooleanVar()
 			self.column_vars[col] = boolean_var
 			self.delete_columns_menu.add_checkbutton(label=col, variable=boolean_var)
-			self.division_and_multiplication_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
+			self.basic_arithmetical_operations_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
    
 	def update_datetime_combobox(self):
 		self.datetime_combobox['values'] = list(self.main_app.df.columns)
