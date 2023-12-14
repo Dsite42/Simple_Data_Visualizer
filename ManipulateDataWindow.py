@@ -23,7 +23,7 @@ class ManipulateDataWindow:
 		self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
 		# Add buttons and other UI elements here
-		save_button = tk.Button(self.window, text="Save Plot", command=lambda: self.save_plot())
+		save_button = tk.Button(self.window, text="Save as CSV", command=lambda: self.save_as_csv())
 		save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
 		copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.fig))
@@ -276,13 +276,8 @@ class ManipulateDataWindow:
 			self.main_app.open_windows.append(self)
 			print("Refresh set")
 		
-	def save_plot(self):
-		plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
-		filepath = filedialog.asksaveasfilename(
-			defaultextension='',
-			filetypes=[("PNG files", "*.png"), ("All Files", "*.*")],
-			title="Save plot",
-			initialfile= plot_title
-		)
-		if filepath:
-			self.fig.savefig(filepath)
+	def save_as_csv(self):
+		file_path = filedialog.asksaveasfilename(title="Save as CSV", filetypes=[("CSV", "*.csv")])
+		if file_path:
+			self.main_app.df.to_csv(file_path, index=False, sep=";")
+			messagebox.showinfo("Information", "File saved")
