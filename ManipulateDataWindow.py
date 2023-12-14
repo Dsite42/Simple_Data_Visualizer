@@ -27,11 +27,11 @@ class ManipulateDataWindow:
 		save_button = tk.Button(self.window, text="Save as CSV", command=lambda: self.save_as_csv())
 		save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
-		copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.fig))
-		copy_button.grid(row=0, column=0, padx=100, pady=5, sticky='w')
+		copy_button = tk.Button(self.window, text="Duplicate Dataframe", command=lambda: self.duplicate_dataframe())
+		copy_button.grid(row=0, column=0, padx=125, pady=5, sticky='w')
 		
 		set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
-		set_refresh_button.grid(row=0, column=0, padx=200, pady=5, sticky='w')
+		set_refresh_button.grid(row=0, column=0, padx=300, pady=5, sticky='w')
 
 		# Frame für Treeview und Scrollbars
 		self.treeview_frame = tk.Frame(self.window)
@@ -282,3 +282,13 @@ class ManipulateDataWindow:
 		if file_path:
 			self.main_app.df.to_csv(file_path, index=False, sep=";")
 			messagebox.showinfo("Information", "File saved")
+
+	def duplicate_dataframe(self):
+		name_of_duplicate_df = tk.simpledialog.askstring("Duplicate Dataframe", "Enter the name of the new dataframe:")
+		if name_of_duplicate_df:
+			self.main_app.dataframes[name_of_duplicate_df] = self.main_app.df.copy()
+			self.main_app.dataframes_combobox['values'] = list(self.main_app.dataframes.keys())
+			self.main_app.dataframes_combobox.set(name_of_duplicate_df)
+			self.main_app.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
+			self.main_app.on_dataframe_selected()
+			messagebox.showinfo("Information", "Dataframe duplicated")
