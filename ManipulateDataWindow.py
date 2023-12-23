@@ -136,6 +136,24 @@ class ManipulateDataWindow:
 			self.basic_arithmetical_operations_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
 
 
+		# Frame for filter
+		self.filter_frame = tk.Frame(self.window)
+		self.filter_frame.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
+  
+		# Filter
+		self.filter_label = tk.Label(self.filter_frame, text="Filter:")
+		self.filter_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+		self.filter_entry_var = tk.StringVar()
+		self.filter_entry = tk.Entry(self.filter_frame, textvariable=self.filter_entry_var, width=50)
+		self.filter_entry.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+		self.filter_button = tk.Button(self.filter_frame, text="Filter", command=self.apply_filter)
+		self.filter_button.grid(row=0, column=2, padx=5, pady=5, sticky='w')
+		self.reset_filter_button = tk.Button(self.filter_frame, text="Reset", command=self.reset_filter)
+		self.reset_filter_button.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+    
+  
+
+
 	def on_checkbutton_toggle(self, column_name):
 		if self.column_vars[column_name].get():
 			# Wenn der Checkbutton aktiviert wurde, fügen Sie den Spaltennamen der Liste hinzu
@@ -167,7 +185,7 @@ class ManipulateDataWindow:
 					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = division_result
 			except Exception as e:
 				messagebox.showerror("Fehler", f"Fehler bei der Berechnung: {e}")
-			self.refresh_treeview()
+			self.refresh_treeview(False)
 			self.update_column_select_menu()
 			self.update_datetime_combobox()
 		else:
@@ -182,7 +200,7 @@ class ManipulateDataWindow:
 				# Setzen der Spalte als Index
 				self.main_app.df.set_index(column_name, inplace=True, drop=False)
 				# Aktualisierung der Ansicht
-				self.refresh_treeview()
+				self.refresh_treeview(False)
 			except Exception as e:
 				# Anzeigen des Fehlers in einer MessageBox
 				messagebox.showerror("Fehler", f"Fehler bei der Konvertierung in datetime: {e}")
@@ -199,7 +217,7 @@ class ManipulateDataWindow:
 	def delete_columns(self):
 		selected_columns = [col for col, var in self.column_vars.items() if var.get()]
 		self.main_app.df.drop(selected_columns, axis=1, inplace=True)
-		self.refresh_treeview()
+		self.refresh_treeview(False)
 		self.update_column_select_menu()
 		self.update_datetime_combobox()
 
@@ -218,7 +236,7 @@ class ManipulateDataWindow:
 		self.datetime_combobox['values'] = list(self.main_app.df.columns)
 	  
   
-	def refresh_treeview(self):
+	def refresh_treeview(self, is_filter):
 		# Löschen aller Daten im Treeview
 		for row in self.data_treeview.get_children():
 			self.data_treeview.delete(row)
@@ -239,8 +257,8 @@ class ManipulateDataWindow:
 		for index, row in self.main_app.df.iterrows():
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
-		
-		self.main_app.on_dataframe_selected()
+		if is_filter == False:
+			self.main_app.on_dataframe_selected()
 
 
 	def on_close(self):
@@ -292,3 +310,17 @@ class ManipulateDataWindow:
 			self.main_app.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
 			self.main_app.on_dataframe_selected()
 			messagebox.showinfo("Information", "Dataframe duplicated")
+   
+	def apply_filter(self):
+		if self.filter_entry_var.get():
+			try:
+				self.main_app.df = self.main_app.df.query(self.filter_entry_var.get())
+				self.refresh_treeview(True)
+			except Exception as e:
+				messagebox.showerror("Fehler", f"Fehler beim Filtern: {e}")
+		else:
+			messagebox.showinfo("Information", "Bitte Filter eingeben")
+   
+	def reset_filter(self):
+		self.main_app.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
+		self.refresh_treeview(False)
