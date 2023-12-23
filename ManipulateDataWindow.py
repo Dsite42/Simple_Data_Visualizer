@@ -143,8 +143,8 @@ class ManipulateDataWindow:
 		# Filter
 		self.filter_label = tk.Label(self.filter_frame, text="Filter:")
 		self.filter_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-		self.filter_entry_var = tk.StringVar()
-		self.filter_entry = tk.Entry(self.filter_frame, textvariable=self.filter_entry_var, width=50)
+		self.filter_entry_var = tk.StringVar(value="(column1 > 5 & column2 < column3) | column4 == 'test'")
+		self.filter_entry = tk.Entry(self.filter_frame, textvariable=self.filter_entry_var, width=80)
 		self.filter_entry.grid(row=0, column=1, padx=5, pady=5, sticky='w')
 		self.filter_button = tk.Button(self.filter_frame, text="Filter", command=self.apply_filter)
 		self.filter_button.grid(row=0, column=2, padx=5, pady=5, sticky='w')

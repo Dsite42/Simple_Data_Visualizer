@@ -9,13 +9,18 @@ class ManualPlotAnalysis(BaseAnalysis):
 		self.plot_title = tk.StringVar(value = "Manual Plot")
 
 		self.code_entry_text = (
-			"#Schreiben Sie hier Ihren Code. \n"
-			"#Stellen Sie sicher, dass das resultierende Figure-Objekt in einer Variablen namens 'fig' gespeichert wird.\n"
-			"#Zum Beispiel:\n"
+			"# Write your code here. \n"
+			"# Ensure that the resulting Figure object is stored in a variable named 'fig'.\n"
+			"# For example:\n"
 			"#import seaborn as sns\n"
 			"#sns.set(style='darkgrid')\n"
 			"#g=sns.jointplot(x=df['Age'],y=df['BMI'],data=df,kind='kde')\n"
 			"#fig = g.fig\n"
+			"#\n"
+			"#You can also manipluate the data manually, for example:\n"
+			"#import pandas as pd\n"
+			"#date = pd.to_datetime(df['Date'], format='%d.%m.%Y')\n"
+			"#df['Day_of_Week'] = date.dt.day_name()\n"
 		) 
  
 	def init_ui(self):
