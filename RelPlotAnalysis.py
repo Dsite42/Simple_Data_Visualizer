@@ -34,8 +34,17 @@ class RelPlotAnalysis(BaseAnalysis):
  
 	def create_plot_args(self, data):
 		selected_columns = self.main_app.get_selected_columns()  
-		plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": data}
-		if self.hue.get():
+  
+  
+		if len(selected_columns) > 2:
+			all_columns = list(data.columns)
+			id_vars = [col for col in all_columns if col not in selected_columns[1:]]
+			melted_df = data.melt(id_vars=id_vars, value_vars=selected_columns[1:], var_name='Measurement', value_name='Value')
+			plot_args = {"x": selected_columns[0], "y": "Value", "hue": "Measurement", "data": melted_df}  
+		else:
+			plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": data}
+		
+		if len(selected_columns) == 2 and self.hue.get():
 			plot_args["hue"] = self.hue.get()
 		if self.size.get():
 			plot_args["size"] = self.size.get()
@@ -51,9 +60,9 @@ class RelPlotAnalysis(BaseAnalysis):
  
 	def show_rel_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		if len(selected_columns) != 2:
-			messagebox.showinfo("Information", "Select two Columns")
-			return
+		if len(selected_columns) < 2:
+			messagebox.showinfo("Information", "Select two or more Columns")
+			return			
 		plot_args = self.create_plot_args(self.main_app.df)
 		# Create a Seaborn relational plot
 		g = sns.relplot(**plot_args)
