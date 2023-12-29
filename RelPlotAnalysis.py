@@ -34,15 +34,23 @@ class RelPlotAnalysis(BaseAnalysis):
  
 	def create_plot_args(self, data):
 		selected_columns = self.main_app.get_selected_columns()  
-  
-  
-		if len(selected_columns) > 2:
-			all_columns = list(data.columns)
-			id_vars = [col for col in all_columns if col not in selected_columns[1:]]
-			melted_df = data.melt(id_vars=id_vars, value_vars=selected_columns[1:], var_name='Measurement', value_name='Value')
-			plot_args = {"x": selected_columns[0], "y": "Value", "hue": "Measurement", "data": melted_df}  
+		if self.main_app.x_axis_combobox.get() != "":
+			x_axis = self.main_app.x_axis_combobox.get()
 		else:
-			plot_args = {"x": selected_columns[0], "y": selected_columns[1], "data": data}
+			x_axis = selected_columns[0]
+		
+		y_axis = [col for col in selected_columns if col != x_axis]
+  
+		if len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != ""):
+			all_columns = list(data.columns)
+			if self.main_app.x_axis_combobox.get() == "":
+				id_vars = [col for col in all_columns if col not in selected_columns[1:]]
+			else:
+				id_vars = [col for col in all_columns if col not in selected_columns or col == x_axis]
+			melted_df = data.melt(id_vars=id_vars, value_vars=y_axis, var_name='Measurement', value_name='Value')
+			plot_args = {"x": x_axis, "y": "Value", "hue": "Measurement", "data": melted_df}  
+		else:
+			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
 		
 		if len(selected_columns) == 2 and self.hue.get():
 			plot_args["hue"] = self.hue.get()
@@ -60,8 +68,8 @@ class RelPlotAnalysis(BaseAnalysis):
  
 	def show_rel_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		if len(selected_columns) < 2:
-			messagebox.showinfo("Information", "Select two or more Columns")
+		if len(selected_columns) < 1 or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == ""):
+			messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 			return			
 		plot_args = self.create_plot_args(self.main_app.df)
 		# Create a Seaborn relational plot
