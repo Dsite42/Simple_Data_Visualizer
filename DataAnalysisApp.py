@@ -25,6 +25,7 @@ class DataAnalysisApp:
 
 		self.columns_to_analyze = {}
 		self.df = None
+		self.use_plotly = True
   
 		# Input_Data Frame
 		input_data_frame = tk.Frame(tk_root)

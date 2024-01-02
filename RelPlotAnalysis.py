@@ -6,6 +6,8 @@ from tkinter import filedialog, messagebox, ttk
 from BaseAnalysis import BaseAnalysis
 import seaborn as sns
 sns.set(style="darkgrid")
+import plotly.express as px
+
 
 import io
 from PIL import Image
@@ -48,22 +50,40 @@ class RelPlotAnalysis(BaseAnalysis):
 			else:
 				id_vars = [col for col in all_columns if col not in selected_columns or col == x_axis]
 			melted_df = data.melt(id_vars=id_vars, value_vars=y_axis, var_name='Measurement', value_name='Value')
-			plot_args = {"x": x_axis, "y": "Value", "hue": "Measurement", "data": melted_df}  
+			if self.main_app.use_plotly == False:
+				plot_args = {"x": x_axis, "y": "Value", "hue": "Measurement", "data": melted_df} 
+			else:
+				plot_args = {"x": x_axis, "y": "Value", "color": "Measurement", "data_frame": melted_df}
 		else:
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
+   
+		if self.main_app.use_plotly == False:
+			if len(selected_columns) == 2 and self.hue.get():
+				plot_args["hue"] = self.hue.get()
+			if self.style.get():
+				plot_args["style"] = self.style.get()
+			if self.kind.get():
+				plot_args["kind"] = self.kind.get()
+			if self.row.get():
+				plot_args["row"] = self.row.get()
+			if self.col.get():
+				plot_args["col"] = self.col.get()
+    
+		else:
+			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
+			if len(selected_columns) == 2 and self.hue.get():
+				plot_args["color"] = self.hue.get()
+			if self.style.get():
+				plot_args["symbol"] = self.style.get()	
+			if self.row.get():
+				plot_args["facet_row"] = self.row.get()
+			if self.col.get():
+				plot_args["facet_col"] = self.col.get()
 		
-		if len(selected_columns) == 2 and self.hue.get():
-			plot_args["hue"] = self.hue.get()
 		if self.size.get():
 			plot_args["size"] = self.size.get()
-		if self.style.get():
-			plot_args["style"] = self.style.get()
-		if self.kind.get():
-			plot_args["kind"] = self.kind.get()
-		if self.row.get():
-			plot_args["row"] = self.row.get()
-		if self.col.get():
-			plot_args["col"] = self.col.get()
+
+		
 		return plot_args
  
 	def show_rel_plot(self, refresh_plot):
@@ -71,20 +91,36 @@ class RelPlotAnalysis(BaseAnalysis):
 		if len(selected_columns) < 1 or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == ""):
 			messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 			return			
-		plot_args = self.create_plot_args(self.main_app.df)
-		# Create a Seaborn relational plot
-		g = sns.relplot(**plot_args)
-		if self.title_x_axis.get() != "":
-			g.set_axis_labels(x_var=self.title_x_axis.get())
-		if self.title_y_axis.get() != "":
-			g.set_axis_labels(y_var=self.title_y_axis.get())
 		
-		fig = g.fig
-		if self.plot_with.get() and self.plot_hight.get():
-			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
-		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
-		fig.subplots_adjust(top=0.94)
+		if self.main_app.use_plotly == False:
+  			# Create a Seaborn relational plot
+			plot_args = self.create_plot_args(self.main_app.df)
+			g = sns.relplot(**plot_args)
+			if self.title_x_axis.get() != "":
+				g.set_axis_labels(x_var=self.title_x_axis.get())
+			if self.title_y_axis.get() != "":
+				g.set_axis_labels(y_var=self.title_y_axis.get())
 
+			fig = g.fig
+			if self.plot_with.get() and self.plot_hight.get():
+				fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
+			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+			fig.subplots_adjust(top=0.94)
+      
+		else:
+			# Create a Plotly relational plot
+			plot_args = self.create_plot_args(self.main_app.df)
+			fig = px.scatter(**plot_args)
+			if self.plot_title.get():
+				fig.update_layout(title=self.plot_title.get())
+			if self.title_x_axis.get():
+				fig.update_layout(xaxis_title=self.title_x_axis.get())
+			if self.title_y_axis.get():
+				fig.update_layout(yaxis_title=self.title_y_axis.get())
+			plot_html_file = 'scatter_plot.html'
+			fig.write_html(plot_html_file)
+
+		print("Plot args: ", plot_args)
 		if refresh_plot:
 			self.display_refresh_plot(fig)
 		else:
