@@ -110,7 +110,12 @@ class RelPlotAnalysis(BaseAnalysis):
 		else:
 			# Create a Plotly relational plot
 			plot_args = self.create_plot_args(self.main_app.df)
-			fig = px.scatter(**plot_args)
+			if self.kind.get() == "line":
+				if isinstance(plot_args["data_frame"].index, pd.DatetimeIndex) == False:
+					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
+				fig = px.line(**plot_args)
+			else:
+				fig = px.scatter(**plot_args)
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
 			if self.title_x_axis.get():
