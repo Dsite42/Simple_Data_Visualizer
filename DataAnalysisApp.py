@@ -9,11 +9,14 @@ from ManualPlotAnalysis import ManualPlotAnalysis
 from ConsoleOutput import ConsoleOutput
 from ManipulateDataWindow import ManipulateDataWindow
 import sys
+from cefpython3 import cefpython as cef
+
 
 class DataAnalysisApp:
 	# Constructor
 	def __init__(self, tk_root, operating_system):
 		self.tk_root = tk_root
+		self.cef_loop()
 		self.operating_system = operating_system
 		#tk_root.geometry("400x800")
 		tk_root.title("Einfaches Datenanalyse-Programm")
@@ -169,3 +172,10 @@ class DataAnalysisApp:
 	def show_rel_plot(self):
 		self.rel_analysis = RelPlotAnalysis(self)
 		self.rel_analysis.show_rel_plot()
+
+	def cef_loop(self):
+		cef.MessageLoopWork()
+		self.tk_root.after(10, self.cef_loop)
+
+
+

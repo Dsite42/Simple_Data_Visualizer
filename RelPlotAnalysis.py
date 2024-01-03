@@ -124,15 +124,19 @@ class RelPlotAnalysis(BaseAnalysis):
 		if refresh_plot:
 			self.display_refresh_plot(fig)
 		else:
-			self.main_app.open_windows.append(self.display_plot(fig))
+			if self.main_app.use_plotly == False:
+				self.main_app.open_windows.append(self.display_plot(fig))
+			else:
+				self.main_app.open_windows.append(self.display_plotly_plot(fig))
 
 
 
 		# Speichern der Achsen und der zugehörigen Facet-Titel
-		axes_facet_map = {}
-		for ax in g.axes.flatten():
-			facet_title = ax.get_title()
-			axes_facet_map[ax] = facet_title
+		if self.main_app.use_plotly == False:
+			axes_facet_map = {}
+			for ax in g.axes.flatten():
+				facet_title = ax.get_title()
+				axes_facet_map[ax] = facet_title
 
 		def on_click(event):
 			ax_clicked = event.inaxes
@@ -148,7 +152,8 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.show_clicked_plot(False, filtered_data)
 
 		# add event-handeler
-		g.fig.canvas.mpl_connect('button_press_event', on_click)
+		if self.main_app.use_plotly == False:
+			g.fig.canvas.mpl_connect('button_press_event', on_click)
 
 	def show_clicked_plot(self, refresh_plot, filtered_data):
 		selected_columns = self.main_app.get_selected_columns()
