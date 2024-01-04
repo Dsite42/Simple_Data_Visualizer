@@ -125,7 +125,7 @@ class RelPlotAnalysis(BaseAnalysis):
 			plot_html_file = 'scatter_plot.html'
 			fig.write_html(plot_html_file)
 
-		print("Plot args: ", plot_args)
+		#print("Plot args: ", plot_args)
 		if refresh_plot:
 			self.display_refresh_plot(fig)
 		else:
