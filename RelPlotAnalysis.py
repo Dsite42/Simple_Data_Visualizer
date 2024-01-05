@@ -50,14 +50,14 @@ class RelPlotAnalysis(BaseAnalysis):
 			else:
 				id_vars = [col for col in all_columns if col not in selected_columns or col == x_axis]
 			melted_df = data.melt(id_vars=id_vars, value_vars=y_axis, var_name='Measurement', value_name='Value')
-			if self.main_app.use_plotly == False:
+			if self.main_app.use_plotly.get() == False:
 				plot_args = {"x": x_axis, "y": "Value", "hue": "Measurement", "data": melted_df} 
 			else:
 				plot_args = {"x": x_axis, "y": "Value", "color": "Measurement", "data_frame": melted_df}
 		else:
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
    
-		if self.main_app.use_plotly == False:
+		if self.main_app.use_plotly.get() == False:
 			if len(selected_columns) == 2 and self.hue.get():
 				plot_args["hue"] = self.hue.get()
 			if self.style.get():
@@ -92,7 +92,7 @@ class RelPlotAnalysis(BaseAnalysis):
 			messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 			return			
 		
-		if self.main_app.use_plotly == False:
+		if self.main_app.use_plotly.get() == False:
   			# Create a Seaborn relational plot
 			plot_args = self.create_plot_args(self.main_app.df)
 			g = sns.relplot(**plot_args)
@@ -124,12 +124,15 @@ class RelPlotAnalysis(BaseAnalysis):
 				fig.update_layout(yaxis_title=self.title_y_axis.get())
 			plot_html_file = 'scatter_plot.html'
 			fig.write_html(plot_html_file)
-
+			fig.update_layout(autosize=True, width=None, height=None)
+			if self.plot_with.get() and self.plot_hight.get():
+				fig.update_layout(width=float(self.plot_with.get()), height=float(self.plot_hight.get()))
+       
 		#print("Plot args: ", plot_args)
 		if refresh_plot:
 			self.display_refresh_plot(fig)
 		else:
-			if self.main_app.use_plotly == False:
+			if self.main_app.use_plotly.get() == False:
 				self.main_app.open_windows.append(self.display_plot(fig))
 			else:
 				self.main_app.open_windows.append(self.display_plotly_plot(fig))
@@ -137,7 +140,7 @@ class RelPlotAnalysis(BaseAnalysis):
 
 
 		# Speichern der Achsen und der zugehörigen Facet-Titel
-		if self.main_app.use_plotly == False:
+		if self.main_app.use_plotly.get() == False:
 			axes_facet_map = {}
 			for ax in g.axes.flatten():
 				facet_title = ax.get_title()
@@ -157,7 +160,7 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.show_clicked_plot(False, filtered_data)
 
 		# add event-handeler
-		if self.main_app.use_plotly == False:
+		if self.main_app.use_plotly.get() == False:
 			g.fig.canvas.mpl_connect('button_press_event', on_click)
 
 	def show_clicked_plot(self, refresh_plot, filtered_data):

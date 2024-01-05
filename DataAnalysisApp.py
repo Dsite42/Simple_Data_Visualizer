@@ -28,7 +28,6 @@ class DataAnalysisApp:
 
 		self.columns_to_analyze = {}
 		self.df = None
-		self.use_plotly = True
   
 		# Input_Data Frame
 		input_data_frame = tk.Frame(tk_root)
@@ -40,6 +39,11 @@ class DataAnalysisApp:
 		# Button for data manipulation
 		data_manipulation_button = tk.Button(input_data_frame, text="Manipulate Data", command=lambda: ManipulateDataWindow(self))
 		data_manipulation_button.pack(side=tk.RIGHT, padx=5, pady=5)
+  
+		# checkbox for use plotly
+		self.use_plotly = tk.BooleanVar(value=False)
+		self.use_plotly_checkbox = tk.Checkbutton(input_data_frame, text="Use Plotly", variable=self.use_plotly)
+		self.use_plotly_checkbox.pack(side=tk.RIGHT, padx=5, pady=5)
 
 		# dataframes
 		dataframes_frame = tk.Frame(tk_root)
