@@ -122,13 +122,10 @@ class RelPlotAnalysis(BaseAnalysis):
 				fig.update_layout(xaxis_title=self.title_x_axis.get())
 			if self.title_y_axis.get():
 				fig.update_layout(yaxis_title=self.title_y_axis.get())
-			plot_html_file = 'scatter_plot.html'
-			fig.write_html(plot_html_file)
 			fig.update_layout(autosize=True, width=None, height=None)
 			if self.plot_with.get() and self.plot_hight.get():
 				fig.update_layout(width=float(self.plot_with.get()), height=float(self.plot_hight.get()))
        
-		#print("Plot args: ", plot_args)
 		if refresh_plot:
 			self.display_refresh_plot(fig)
 		else:
@@ -139,7 +136,7 @@ class RelPlotAnalysis(BaseAnalysis):
 
 
 
-		# Speichern der Achsen und der zugehörigen Facet-Titel
+		# Save the axes and the corresponding facet title
 		if self.main_app.use_plotly.get() == False:
 			axes_facet_map = {}
 			for ax in g.axes.flatten():
@@ -159,7 +156,7 @@ class RelPlotAnalysis(BaseAnalysis):
 					filtered_data = filtered_data[filtered_data[column] == value]
 			self.show_clicked_plot(False, filtered_data)
 
-		# add event-handeler
+		# add event-handeler for clicking on facets
 		if self.main_app.use_plotly.get() == False:
 			g.fig.canvas.mpl_connect('button_press_event', on_click)
 
@@ -191,20 +188,20 @@ class RelPlotAnalysis(BaseAnalysis):
 
 	def init_ui(self):
 		self.plot_arguments_frame_visible = True
-		# Zuvor erstellte Widgets im parent_frame entfernen
+  		# Remove previously created widgets in the parent_frame
 		for widget in self.main_app.rel_tab_frame.winfo_children():
 			widget.destroy()
    
 
-		# Frame für den Button
+		# Frame for buttons
 		button_frame = tk.Frame(self.main_app.rel_tab_frame)
 		button_frame.pack(padx=5, pady=5, anchor='c')
 
-		# Button zum Anzeigen des Rel Plots
+		# Button to show Rel Plot in new window
 		show_plot_button = tk.Button(button_frame, text="Show Plot", command=lambda: self.show_rel_plot(False))
 		show_plot_button.grid(row=0, column=0, padx=5)
   
-		# Button zum Erneuern des Rel Plots
+		# Button to refresh Rel Plot in same window
 		show_plot_button = tk.Button(button_frame, text="Refresh Plot", command=lambda: self.show_rel_plot(True))
 		show_plot_button.grid(row=0, column=1, padx=5)
   

@@ -45,7 +45,7 @@ class PlotWindow:
         self.adjust_window_size()
 
     def adjust_window_size(self):
-        additional_height = 50  # Zusätzliche Höhe für Achsenbeschriftungen und Buttons
+        additional_height = 50  # Additional height for axis labels and buttons
         width = self.fig.get_figwidth() * self.fig.dpi
         height = self.fig.get_figheight() * self.fig.dpi + additional_height
         self.window.geometry(f"{int(width)}x{int(height)}")
@@ -82,12 +82,12 @@ class PlotWindow:
             import win32clipboard
 
             plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
-            # Den Plot als Bild in einen BytesIO-Buffer speichern
+            # Save plotly figure in a BytesIO buffer as PNG
             buf = io.BytesIO()
             plt.savefig(buf, format='png')
             buf.seek(0)
 
-            # Das Bild aus dem Buffer in die Zwischenablage kopieren
+            # Copy the image from the buffer to the clipboard
             image = Image.open(buf)
             output = io.BytesIO()
             image.convert("RGB").save(output, "BMP")
@@ -104,13 +104,12 @@ class PlotWindow:
         if self.main_app.operating_system == "Linux":
             import io
             import subprocess
-            # Den Plot als PNG-Bild in einen BytesIO-Buffer speichern
+            # Save plotly figure in a BytesIO buffer as PNG
             buf = io.BytesIO()
             self.fig.savefig(buf, format='png')
             buf.seek(0)
 
-            # Das Bild an xclip übergeben, um es in die Zwischenablage zu kopieren
-            # Hier wird das Bild in der PNG-Form an die Zwischenablage gesendet
+            # Pass the image to xclip to copy it to the clipboard
             process = subprocess.Popen(['xclip', '-selection', 'clipboard', '-t', 'image/png', '-i'], stdin=subprocess.PIPE)
             process.communicate(input=buf.getvalue())
 
@@ -122,19 +121,19 @@ class PlotWindow:
             from PIL import Image
             import subprocess
 
-            # Speichern des Plots in einem BytesIO-Buffer
+            # Save plotly figure in a BytesIO buffer as PNG
             buf = io.BytesIO()
             fig.savefig(buf, format='png')
             buf.seek(0)
             img = Image.open(buf)
 
-            # Speichern des Bildes in einer temporären Datei
+            # Save the image to a temporary file
             temp_path = "/tmp/temp_plot.png"
             img.save(temp_path, "PNG")
 
-            # Kopieren des Bildes in die Zwischenablage mit macOS-Befehlen
+            # Copy the image to the clipboard using macOS commands
             subprocess.run(["osascript", "-e", f'set the clipboard to (read (POSIX file "{temp_path}") as JPEG picture)'])
 
-            # Löschen der temporären Datei
+            # Remove the temporary file
             os.remove(temp_path)
             buf.close()        

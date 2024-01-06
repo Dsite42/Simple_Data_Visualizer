@@ -41,7 +41,7 @@ class ManualPlotAnalysis(BaseAnalysis):
 		self.code_entry.insert(tk.END, self.code_entry_text)
 
 	def execute_and_show_plot(self, refresh_plot):
-		user_env = {"df": self.main_app.df}  # Hier ist das DataFrame, das Sie dem Benutzer zur Verfügung stellen
+		user_env = {"df": self.main_app.df}
 		user_code = self.code_entry.get("1.0", tk.END)
 		exec(user_code, user_env)
   
@@ -55,7 +55,6 @@ class ManualPlotAnalysis(BaseAnalysis):
 				self.main_app.open_windows.append(self.display_plot(fig))
 
 		else:
-			# Fehlerbehandlung, falls kein Figure-Objekt vorhanden ist
 			messagebox.showinfo("Error", "The code did not produce a 'fig' variable.")
 			print("Error: The code did not produce a 'fig' variable.")  
 

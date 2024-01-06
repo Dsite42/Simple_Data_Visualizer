@@ -26,7 +26,7 @@ def check_os():
 	elif os_name == 'Darwin':
 		return "Darwin"
 	else:
-		return "Anderes Betriebssystem"
+		return "Different operating system"
 
 
 if __name__ == "__main__":

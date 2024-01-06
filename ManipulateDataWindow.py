@@ -33,37 +33,37 @@ class ManipulateDataWindow:
 		set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
 		set_refresh_button.grid(row=0, column=0, padx=300, pady=5, sticky='w')
 
-		# Frame für Treeview und Scrollbars
+		# Frame for Treeview and Scrollbars
 		self.treeview_frame = tk.Frame(self.window)
 		self.treeview_frame.grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
 
-		# Treeview-Widget hinzufügen
+		# Treeview-Widget
 		self.treeview_columns = ["Index"] + list(self.main_app.df.columns)
 		self.data_treeview = ttk.Treeview(self.treeview_frame, columns=list(self.treeview_columns), show='headings')
 		self.data_treeview.grid(row=0, column=0, sticky='nsew')
 
-		# Vertikale Scrollbar hinzufügen
+		# Vertical Scrollbar
 		self.v_scroll = ttk.Scrollbar(self.treeview_frame, orient='vertical', command=self.data_treeview.yview)
 		self.v_scroll.grid(row=0, column=1, sticky='ns')
 		self.data_treeview.configure(yscrollcommand=self.v_scroll.set)
 
-		# Horizontale Scrollbar hinzufügen
+		# Horizontal Scrollbar
 		self.h_scroll = ttk.Scrollbar(self.treeview_frame, orient='horizontal', command=self.data_treeview.xview)
 		self.h_scroll.grid(row=2, column=0, sticky='ew')
 		self.data_treeview.configure(xscrollcommand=self.h_scroll.set)
 
-		## Anpassen des Grid-Layouts, um das Treeview-Widget auszudehnen
+		# Adapt the grid layout to expand the Treeview widget
 		self.window.grid_rowconfigure(1, weight=1)
 		self.window.grid_columnconfigure(0, weight=1)
 		self.treeview_frame.grid_columnconfigure(0, weight=1)
 		self.treeview_frame.grid_rowconfigure(0, weight=1)
 
-		# Spaltenüberschriften und -breite definieren
+		# Define column headings and width
 		for col in self.treeview_columns:
 			self.data_treeview.heading(col, text=col)
 			self.data_treeview.column(col, anchor=tk.CENTER, width=100, stretch=False)
 
-		# DataFrame-Daten hinzufügen
+		# Add dataFrame data
 		for index, row in self.main_app.df.iterrows():
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
@@ -73,13 +73,13 @@ class ManipulateDataWindow:
 		self.data_manipulation_frame = tk.Frame(self.window)
 		self.data_manipulation_frame.grid(row=2, column=0, padx=5, pady=5, sticky='nsew')
 		
-		# Dropdown-Menü für die Auswahl von Spalten
+		# Dropdown menu for selecting columns
 		self.delete_columns_menubutton = tk.Menubutton(self.data_manipulation_frame, text="Select columns", relief=tk.RAISED)
 		self.delete_columns_menubutton.grid(row=0, column=0, padx=5, pady=5, sticky='w')
 		self.delete_columns_menu = tk.Menu(self.delete_columns_menubutton, tearoff=False)
 		self.delete_columns_menubutton['menu'] = self.delete_columns_menu
 
-		# Schaltfläche zum Löschen ausgewählter Spalten
+		# Button to delete selected columns
 		self.delete_columns_button = tk.Button(self.data_manipulation_frame, text="Delete columns", command=self.delete_columns)
 		self.delete_columns_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
 
@@ -108,7 +108,7 @@ class ManipulateDataWindow:
 		self.reset_datetime_index_button.grid(row=1, column=5, padx=5, pady=5, sticky='w')
 
 
-		# Devision and multiplication
+		# Basic arithmetical operations
 		self.basic_arithmetical_operations_label = tk.Label(self.data_manipulation_frame, text="New column:")
 		self.basic_arithmetical_operations_label.grid(row=2, column=0, padx=5, pady=5, sticky='w')
 		self.basic_arithmetical_operations_entry_var = tk.StringVar()
@@ -153,14 +153,12 @@ class ManipulateDataWindow:
     
   
 
-
+	# Order of column selection in menu for basic arithmetical operations
 	def on_checkbutton_toggle(self, column_name):
 		if self.column_vars[column_name].get():
-			# Wenn der Checkbutton aktiviert wurde, fügen Sie den Spaltennamen der Liste hinzu
 			if column_name not in self.selected_columns_order:
 				self.selected_columns_order.append(column_name)
 		else:
-			# Wenn der Checkbutton deaktiviert wurde, entfernen Sie den Spaltennamen aus der Liste
 			if column_name in self.selected_columns_order:
 				self.selected_columns_order.remove(column_name)
 	
@@ -184,29 +182,25 @@ class ManipulateDataWindow:
 						division_result = division_result.div(self.main_app.df[col])
 					self.main_app.df[self.basic_arithmetical_operations_entry_var.get()] = division_result
 			except Exception as e:
-				messagebox.showerror("Fehler", f"Fehler bei der Berechnung: {e}")
+				messagebox.showerror("Error", f"Error at calculating: {e}")
 			self.refresh_treeview(False)
 			self.update_column_select_menu()
 			self.update_datetime_combobox()
 		else:
-			messagebox.showinfo("Information", "Bitte Spalten auswählen und einen Spaltennamen eingeben")
+			messagebox.showinfo("Information", "Please enter a column name, select arithmetical operation and select columns")
   
 	def set_datetime_index(self):
 		column_name = self.datetime_combobox.get()	
 		if column_name in self.main_app.df.columns:
 			try:
-				# Konvertierung der Spalte in datetime
 				self.main_app.df[column_name] = pd.to_datetime(self.main_app.df[column_name], format=self.datetime_format.get())	
-				# Setzen der Spalte als Index
 				self.main_app.df.set_index(column_name, inplace=True, drop=False)
-				# Aktualisierung der Ansicht
 				self.refresh_treeview(False)
 			except Exception as e:
-				# Anzeigen des Fehlers in einer MessageBox
-				messagebox.showerror("Fehler", f"Fehler bei der Konvertierung in datetime: {e}")
+				messagebox.showerror("Error", f"Error at converting to datetime: {e}")
 		else:
-			# Anzeigen einer Nachricht, wenn die Spalte nicht gefunden wird
-			messagebox.showinfo("Information", "Spalte nicht gefunden")  
+			messagebox.showinfo("Information", "Column not found")
+  
   
 	def reset_datetime_index(self):
 		self.main_app.df.reset_index(inplace=True, drop=True)
@@ -221,6 +215,7 @@ class ManipulateDataWindow:
 		self.update_column_select_menu()
 		self.update_datetime_combobox()
 
+
 	def update_column_select_menu(self):
 		self.delete_columns_menu.delete(0, tk.END)
 		self.basic_arithmetical_operations_menu.delete(0, tk.END)
@@ -232,28 +227,29 @@ class ManipulateDataWindow:
 			self.delete_columns_menu.add_checkbutton(label=col, variable=boolean_var)
 			self.basic_arithmetical_operations_menu.add_checkbutton(label=col, variable=boolean_var, command=lambda col=col: self.on_checkbutton_toggle(col))
    
+   
 	def update_datetime_combobox(self):
 		self.datetime_combobox['values'] = list(self.main_app.df.columns)
 	  
   
 	def refresh_treeview(self, is_filter):
-		# Löschen aller Daten im Treeview
+		# Delete all data/ rows
 		for row in self.data_treeview.get_children():
 			self.data_treeview.delete(row)
 	
-		# Löschen aller vorhandenen Spalten im Treeview
+		# Delete all existing columns in the Treeview
 		for col in self.data_treeview["columns"]:
 			self.data_treeview.heading(col, text="")
 			self.data_treeview.column(col, width=0, minwidth=0, stretch=False)
 	
-		# Aktualisieren der Spalten im Treeview basierend auf dem DataFrame
+		# Define column headings and width
 		self.treeview_columns = ["Index"] + list(self.main_app.df.columns)
 		self.data_treeview["columns"] = list(self.treeview_columns)
 		for col in self.treeview_columns:
 			self.data_treeview.heading(col, text=col)
 			self.data_treeview.column(col, anchor=tk.CENTER, width=100, stretch=False)
 		
-		# DataFrame-Daten hinzufügen
+		# Add DataFrame-Data
 		for index, row in self.main_app.df.iterrows():
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
@@ -277,13 +273,12 @@ class ManipulateDataWindow:
 		self.adjust_window_size()
 
 	def adjust_window_size(self):
-		additional_height = 50  # Zusätzliche Höhe für Achsenbeschriftungen und Buttons
+		additional_height = 50  # Additional height for axis labels and buttons
 		width = self.fig.get_figwidth() * self.fig.dpi
 		height = self.fig.get_figheight() * self.fig.dpi + additional_height
 		self.window.geometry(f"{int(width)}x{int(height)}")
 	
 	def refresh_plot(self, new_fig):
-		# Close the old figure
 		if self.fig:
 			plt.close(self.fig)
 
@@ -317,9 +312,9 @@ class ManipulateDataWindow:
 				self.main_app.df = self.main_app.df.query(self.filter_entry_var.get())
 				self.refresh_treeview(True)
 			except Exception as e:
-				messagebox.showerror("Fehler", f"Fehler beim Filtern: {e}")
+				messagebox.showerror("Error", f"Error at filtering: {e}")
 		else:
-			messagebox.showinfo("Information", "Bitte Filter eingeben")
+			messagebox.showinfo("Information", "Please enter a filter")
    
 	def reset_filter(self):
 		self.main_app.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
