@@ -49,6 +49,8 @@ class ManualPlotAnalysis(BaseAnalysis):
 			fig = user_env["fig"]
 			if refresh_plot:
 				self.main_app.open_windows[-1].refresh_plot(fig)
+			elif self.main_app.use_plotly.get():
+				self.main_app.open_windows.append(self.display_plotly_plot(fig))
 			else:
 				self.main_app.open_windows.append(self.display_plot(fig))
 
