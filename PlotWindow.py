@@ -77,63 +77,68 @@ class PlotWindow:
         
     def copy_plot(self, fig):
         if self.main_app.operating_system == "Windows":
-            import io
-            from PIL import Image
-            import win32clipboard
+            self.copyToClipboardWindows(fig)
+        elif self.main_app.operating_system == "Linux":
+            self.copyToClippboardLinux(fig)
+        
+            
 
-            plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
-            # Save plotly figure in a BytesIO buffer as PNG
-            buf = io.BytesIO()
-            plt.savefig(buf, format='png')
-            buf.seek(0)
+        elif self.main_app.operating_system == "Darwin":
+            self.copyToClipboardMac(fig)
+            
 
-            # Copy the image from the buffer to the clipboard
-            image = Image.open(buf)
-            output = io.BytesIO()
-            image.convert("RGB").save(output, "BMP")
-            data = output.getvalue()[14:]
-            output.close()
+    def copyToClipboardWindows(self, fig):
+        import io
+        from PIL import Image
+        import win32clipboard
+        plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
+        # Save plotly figure in a BytesIO buffer as PNG
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        # Copy the image from the buffer to the clipboard
+        image = Image.open(buf)
+        output = io.BytesIO()
+        image.convert("RGB").save(output, "BMP")
+        data = output.getvalue()[14:]
+        output.close()
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+        win32clipboard.CloseClipboard()
+        buf.close()
 
-            win32clipboard.OpenClipboard()
-            win32clipboard.EmptyClipboard()
-            win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
-            win32clipboard.CloseClipboard()
 
-            buf.close()
+    def copyToClippboardLinux(self, fig):
+        import io
+        import subprocess
+        # Save plotly figure in a BytesIO buffer as PNG
+        buf = io.BytesIO()
+        self.fig.savefig(buf, format='png')
+        buf.seek(0)
 
-        if self.main_app.operating_system == "Linux":
-            import io
-            import subprocess
-            # Save plotly figure in a BytesIO buffer as PNG
-            buf = io.BytesIO()
-            self.fig.savefig(buf, format='png')
-            buf.seek(0)
+        # Pass the image to xclip to copy it to the clipboard
+        process = subprocess.Popen(['xclip', '-selection', 'clipboard', '-t', 'image/png', '-i'], stdin=subprocess.PIPE)
+        process.communicate(input=buf.getvalue())
 
-            # Pass the image to xclip to copy it to the clipboard
-            process = subprocess.Popen(['xclip', '-selection', 'clipboard', '-t', 'image/png', '-i'], stdin=subprocess.PIPE)
-            process.communicate(input=buf.getvalue())
+        buf.close()
 
-            buf.close()
 
-        if self.main_app.operating_system == "Darwin":
-            import io
-            import os
-            from PIL import Image
-            import subprocess
-
-            # Save plotly figure in a BytesIO buffer as PNG
-            buf = io.BytesIO()
-            fig.savefig(buf, format='png')
-            buf.seek(0)
-            img = Image.open(buf)
-
-            # Save the image to a temporary file
-            temp_path = "/tmp/temp_plot.png"
-            img.save(temp_path, "PNG")
-
-            # Copy the image to the clipboard using macOS commands
-            subprocess.run(["osascript", "-e", f'set the clipboard to (read (POSIX file "{temp_path}") as JPEG picture)'])
-
-            # Remove the temporary file
-            os.remove(temp_path)
-            buf.close()        
+    def copyToClipboardMac(self, fig):
+        import io
+        import os
+        from PIL import Image
+        import subprocess
+        # Save plotly figure in a BytesIO buffer as PNG
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png')
+        buf.seek(0)
+        img = Image.open(buf)
+        # Save the image to a temporary file
+        temp_path = "/tmp/temp_plot.png"
+        img.save(temp_path, "PNG")
+        # Copy the image to the clipboard using macOS commands
+        subprocess.run(["osascript", "-e", f'set the clipboard to (read (POSIX file "{temp_path}") as JPEG picture)'])
+        # Remove the temporary file
+        os.remove(temp_path)
+        buf.close()        
