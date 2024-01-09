@@ -14,13 +14,18 @@ from cefpython3 import cefpython as cef
 
 class DataAnalysisApp:
 	# Constructor
-	def __init__(self, tk_root, operating_system):
-		self.tk_root = tk_root
-		self.cef_loop()
-		self.operating_system = operating_system
+	def __init__(self, operating_system):
+		self.tk_root = tk.Tk()
 		#tk_root.geometry("400x800")
-		tk_root.title("Einfaches Datenanalyse-Programm")
+		self.tk_root.title("Einfaches Datenanalyse-Programm")
+		self.tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
+		## set the scaling
+		#scale_factor = 1.0
+		#tk_root.tk.call('tk', 'scaling', scale_factor)
+		self.operating_system = operating_system
 		print("OS: ", self.operating_system)
+  
+		self.cef_loop()
   
 		# Open Windows
 		self.open_windows = []
@@ -30,7 +35,7 @@ class DataAnalysisApp:
 		self.df = None
   
 		# Input_Data Frame
-		input_data_frame = tk.Frame(tk_root)
+		input_data_frame = tk.Frame(self.tk_root)
 		input_data_frame.pack(padx=5, pady=5)
 		# Button to open csv
 		open_button = tk.Button(input_data_frame, text="Open CSV file", command=lambda: open_file(self))
@@ -46,7 +51,7 @@ class DataAnalysisApp:
 		self.use_plotly_checkbox.pack(side=tk.RIGHT, padx=5, pady=5)
 
 		# dataframes
-		dataframes_frame = tk.Frame(tk_root)
+		dataframes_frame = tk.Frame(self.tk_root)
 		dataframes_frame.pack(padx=5, pady=5)
 		# set dataframe index
 		self.dataframes = {}
@@ -63,11 +68,9 @@ class DataAnalysisApp:
 		self.x_axis_combobox.grid(row=2, column=1, padx=5, pady=5, sticky='w')
 
 
-		# Closing main window
-		tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
 
 		# CSV columns frame with scrollable area
-		self.columns_frame = tk.Frame(tk_root)
+		self.columns_frame = tk.Frame(self.tk_root)
 		self.columns_frame.pack()
 
 		# Scrollable area for columns
@@ -91,7 +94,7 @@ class DataAnalysisApp:
 
 		# Tab Control
 		self.current_tab = None
-		self.tab_control = ttk.Notebook(tk_root)
+		self.tab_control = ttk.Notebook(self.tk_root)
 		self.rel_tab_frame = ttk.Frame(self.tab_control)
 		self.histogram_tab = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
@@ -117,6 +120,11 @@ class DataAnalysisApp:
         
 		# Event-Handler for tab change
 		self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_changed)
+
+
+	def run(self):
+		self.cefpython = cef.Initialize()
+		self.tk_root.mainloop()
 
 
 	def on_tab_changed(self, event):
@@ -167,6 +175,8 @@ class DataAnalysisApp:
 		#if messagebox.askokcancel("Close", "Do you really want to close the program?"):
 		self.tk_root.destroy()
 		self.tk_root.quit()
+		cef.Shutdown()
+
 
 	def get_selected_columns(self):
 		return [col_checkbox["text"] for col_checkbox in self.columns_to_analyze.values() if col_checkbox["var"].get()]
