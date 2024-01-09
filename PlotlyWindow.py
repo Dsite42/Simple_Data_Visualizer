@@ -1,10 +1,7 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
 from tkinter import filedialog
-
 import base64
-import plotly.express as px
 from cefpython3 import cefpython as cef
 
 class PlotlyWindow:
@@ -60,12 +57,16 @@ class PlotlyWindow:
 
 
     def adjust_window_size(self):
-        additional_height = 0  # Additional height for axis labels and buttons
-        width = self.fig.layout.width if self.fig.layout.width is not None else 800
+        additional_height = 40  # Additional height for axis labels and buttons
+        additional_with = 20 # Additional width for axis labels and buttons
+        width = self.fig.layout.width + additional_with if self.fig.layout.width is not None else 800 + additional_with
         height = self.fig.layout.height + additional_height if self.fig.layout.height is not None else 600 + additional_height
         self.window.geometry(f"{int(width)}x{int(height)}")
         self.window_info = cef.WindowInfo(self.frame_cefpython_id)
-        self.window_info.SetAsChild(self.frame_cefpython_id, [0, 0, width, height])
+        if self.fig.layout.width is None and self.fig.layout.height is None:
+            self.window_info.SetAsChild(self.frame_cefpython_id, [0, 0, width - additional_with, height - additional_height])
+        else:
+            self.window_info.SetAsChild(self.frame_cefpython_id, [0, 0, width, height])
         self.window.update_idletasks()
         
 
