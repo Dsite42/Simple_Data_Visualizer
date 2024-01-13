@@ -16,6 +16,10 @@ class PlotWindow:
         self.window = tk.Toplevel(self.main_app.tk_root)
         self.window.title(self.plot_title)
 
+        # Konfigurieren des Fensters, damit es sich vergrößern kann
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
+        
         # Bind the close event
         self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -39,16 +43,45 @@ class PlotWindow:
             self.canvas.get_tk_widget().destroy()
 
         self.fig = fig
-        self.canvas = FigureCanvasTkAgg(fig, master=self.window)
+        
+        # Convert plot size from inches to pixels for tkinter canvas 
+        self.plot_width = self.fig.get_figwidth() * self.fig.dpi
+        self.plot_height = self.fig.get_figheight() * self.fig.dpi
+        self.max_window_width = 1600
+        self.max_window_height =1200
+
+        # Create Canvas and Scrollbars
+        self.canvas_frame = tk.Frame(self.window)
+        self.canvas_frame.grid(row=1, column=0, sticky='nsew')
+        self.plot_canvas = tk.Canvas(self.canvas_frame, width=min(self.plot_width, self.max_window_width), height=min(self.plot_height, self.max_window_height))
+        self.plot_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.v_scroll = tk.Scrollbar(self.canvas_frame, orient='vertical', command=self.plot_canvas.yview)
+        self.v_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.h_scroll = tk.Scrollbar(self.window, orient='horizontal', command=self.plot_canvas.xview)
+        self.h_scroll.grid(row=2, column=0, sticky='ew')
+
+        self.plot_canvas.configure(yscrollcommand=self.v_scroll.set, xscrollcommand=self.h_scroll.set)
+
+        # Show plot in canvas
+        self.canvas = FigureCanvasTkAgg(fig, master=self.plot_canvas)
         self.canvas.draw()
-        self.canvas.get_tk_widget().grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
+        plot_widget = self.canvas.get_tk_widget()
+        self.plot_canvas.create_window((0, 0), window=plot_widget, anchor='nw')
+
+        plot_widget.bind("<Configure>", self.on_plot_resize)
         self.adjust_window_size()
 
+
+    def on_plot_resize(self, event=None):
+        self.plot_canvas.configure(scrollregion=self.plot_canvas.bbox("all"))
+
+
     def adjust_window_size(self):
-        additional_height = 50  # Additional height for axis labels and buttons
-        width = self.fig.get_figwidth() * self.fig.dpi
-        height = self.fig.get_figheight() * self.fig.dpi + additional_height
-        self.window.geometry(f"{int(width)}x{int(height)}")
+        plot_width = min(self.fig.get_figwidth() * self.fig.dpi, self.max_window_width)
+        plot_height = min(self.fig.get_figheight() * self.fig.dpi, self.max_window_height)
+        self.window.geometry(f"{int(min(self.plot_width, self.max_window_width)+20)}x{int(min(self.plot_height, self.max_window_height) + 60)}")  # 50 für zusätzliche UI-Elemente        
+
     
     def refresh_plot(self, new_fig):
         # Close the old figure
