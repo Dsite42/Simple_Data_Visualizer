@@ -15,23 +15,30 @@ class PlotWindow:
     def create_window(self):
         self.window = tk.Toplevel(self.main_app.tk_root)
         self.window.title(self.plot_title)
-
-        # Konfigurieren des Fensters, damit es sich vergrößern kann
-        self.window.grid_rowconfigure(1, weight=1)
-        self.window.grid_columnconfigure(0, weight=1)
-        
+        self.window.bind("<Configure>", self.on_window_configure)
+        self.resize_timer = None
+                
         # Bind the close event
         self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
         # Add buttons and other UI elements here
+        # Set column with equal
+        for i in range(4):
+            self.window.grid_columnconfigure(i, weight=1, uniform="button")
+
         save_button = tk.Button(self.window, text="Save Plot", command=lambda: self.save_plot())
         save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
         copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.fig))
-        copy_button.grid(row=0, column=0, padx=100, pady=5, sticky='w')
+        copy_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
         
         set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
-        set_refresh_button.grid(row=0, column=0, padx=200, pady=5, sticky='w')
+        set_refresh_button.grid(row=0, column=2, padx=5, pady=5, sticky='w')
+        
+        self.fig_autoscale = tk.BooleanVar(value=True)
+        set_fig_auto_scale_checkbox = tk.Checkbutton(self.window, text="Auto Scale", variable=self.fig_autoscale)
+        set_fig_auto_scale_checkbox.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+        
 
     def on_close(self):
         if self.fig:
@@ -47,19 +54,22 @@ class PlotWindow:
         # Convert plot size from inches to pixels for tkinter canvas 
         self.plot_width = self.fig.get_figwidth() * self.fig.dpi
         self.plot_height = self.fig.get_figheight() * self.fig.dpi
-        self.max_window_width = 1600
-        self.max_window_height =1200
+        self.max_window_width = self.window.winfo_screenwidth()*0.99 #1600
+        self.max_window_height = self.window.winfo_screenheight()*0.92 #1200
 
         # Create Canvas and Scrollbars
         self.canvas_frame = tk.Frame(self.window)
-        self.canvas_frame.grid(row=1, column=0, sticky='nsew')
+        self.canvas_frame.grid(row=1, column=0, columnspan=4, sticky='nsew')
+         # Configure window to be able to resize
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
         self.plot_canvas = tk.Canvas(self.canvas_frame, width=min(self.plot_width, self.max_window_width), height=min(self.plot_height, self.max_window_height))
-        self.plot_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.plot_canvas.grid(row=0, column=0, sticky='nsew')
 
         self.v_scroll = tk.Scrollbar(self.canvas_frame, orient='vertical', command=self.plot_canvas.yview)
-        self.v_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.v_scroll.grid(row=0, column=1, sticky='ns')
         self.h_scroll = tk.Scrollbar(self.window, orient='horizontal', command=self.plot_canvas.xview)
-        self.h_scroll.grid(row=2, column=0, sticky='ew')
+        self.h_scroll.grid(row=2, column=0, columnspan=4, sticky='ew')
 
         self.plot_canvas.configure(yscrollcommand=self.v_scroll.set, xscrollcommand=self.h_scroll.set)
 
@@ -78,9 +88,9 @@ class PlotWindow:
 
 
     def adjust_window_size(self):
-        plot_width = min(self.fig.get_figwidth() * self.fig.dpi, self.max_window_width)
-        plot_height = min(self.fig.get_figheight() * self.fig.dpi, self.max_window_height)
-        self.window.geometry(f"{int(min(self.plot_width, self.max_window_width)+20)}x{int(min(self.plot_height, self.max_window_height) + 60)}")  # 50 für zusätzliche UI-Elemente        
+        self.additional_width = 20  # Additional width for axis labels and buttons
+        self.additional_height = 60  # Additional height for axis labels and buttons
+        self.window.geometry(f"{int(min(self.plot_width, self.max_window_width)+self.additional_width)}x{int(min(self.plot_height, self.max_window_height) + self.additional_height)}")      
 
     
     def refresh_plot(self, new_fig):
@@ -175,3 +185,27 @@ class PlotWindow:
         # Remove the temporary file
         os.remove(temp_path)
         buf.close()        
+
+
+    def on_window_configure(self, event=None):
+        if self.resize_timer is not None:
+            self.window.after_cancel(self.resize_timer)
+        self.resize_timer = self.window.after(500, self.on_window_resize)
+
+    def on_window_resize(self, event=None):
+        # Erhalten der aktuellen Fenstergröße
+        current_width = self.window.winfo_width()
+        current_height = self.window.winfo_height()
+        
+        if self.fig_autoscale.get() == True :
+            if (abs(current_width - self.plot_width) > self.additional_width or abs(current_height - self.plot_height) > self.additional_height):
+                self.resize_fig(current_width, current_height)
+                self.display_plot(self.fig)
+
+        else:
+            self.plot_canvas.config(width=current_width-20, height=current_height-20) # 20 is the width of the scrollbar
+                        
+    def resize_fig(self, width, height):
+        new_fig_width = width / self.fig.dpi
+        new_fig_height = height / self.fig.dpi
+        self.fig.set_size_inches(new_fig_width, new_fig_height, forward=True)
