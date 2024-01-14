@@ -162,9 +162,6 @@ class RelPlotAnalysis(BaseAnalysis):
 
 	def show_clicked_plot(self, refresh_plot, filtered_data):
 		selected_columns = self.main_app.get_selected_columns()
-		if len(selected_columns) != 2:
-			messagebox.showinfo("Information", "Select two Columns")
-			return
 		plot_args = self.create_plot_args(filtered_data)
 		g = sns.relplot(**plot_args)
 		if self.title_x_axis.get() != "":
