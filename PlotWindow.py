@@ -35,7 +35,7 @@ class PlotWindow:
         set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
         set_refresh_button.grid(row=0, column=2, padx=5, pady=5, sticky='w')
         
-        self.fig_autoscale = tk.BooleanVar(value=True)
+        self.fig_autoscale = tk.BooleanVar(value=False)
         set_fig_auto_scale_checkbox = tk.Checkbutton(self.window, text="Auto Scale", variable=self.fig_autoscale)
         set_fig_auto_scale_checkbox.grid(row=0, column=3, padx=5, pady=5, sticky='w')
         
