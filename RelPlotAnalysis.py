@@ -210,7 +210,7 @@ class RelPlotAnalysis(BaseAnalysis):
 		# Frame for main plot args
 		main_plot_arguments_frame = tk.Frame(self.main_app.rel_tab_frame)
 		main_plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
-		# Eingabefeld für den Titel des Rel Plots
+		# Entry for plot title
 		title_label = tk.Label(main_plot_arguments_frame, text="Plot title:")
 		title_label.grid(row=0, column=0, padx=5)
 		title_entry = tk.Entry(main_plot_arguments_frame, textvariable=self.plot_title)

@@ -5,6 +5,7 @@ from input_data import open_file
 from tkinter import ttk
 
 from RelPlotAnalysis import RelPlotAnalysis
+from PairPlotAnalysis import PairPlotAnalysis
 from ManualPlotAnalysis import ManualPlotAnalysis
 from ConsoleOutput import ConsoleOutput
 from ManipulateDataWindow import ManipulateDataWindow
@@ -96,13 +97,13 @@ class DataAnalysisApp:
 		self.current_tab = None
 		self.tab_control = ttk.Notebook(self.tk_root)
 		self.rel_tab_frame = ttk.Frame(self.tab_control)
-		self.histogram_tab = ttk.Frame(self.tab_control)
+		self.pairplot_tab_frame = ttk.Frame(self.tab_control)
 		self.line_chart_tab = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
 		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
-		self.tab_control.add(self.histogram_tab, text='Histogramm')
+		self.tab_control.add(self.pairplot_tab_frame, text='Pair Plot')
 		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
 		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
@@ -110,7 +111,7 @@ class DataAnalysisApp:
 		self.tab_control.pack(expand=1, fill="both")
   
 		self.rel_analysis = RelPlotAnalysis(self)
-		self.histogram_analysis = None
+		self.pairplot_analysis = None
 		self.line_chart_analysis = None
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
 		self.console_output = ConsoleOutput(self)
@@ -136,10 +137,10 @@ class DataAnalysisApp:
 
 		if tab_text == "Rel Plot":
 			self.rel_analysis.init_ui()
-		elif tab_text == "Histogramm":
-			if self.histogram_analysis is None:
-				self.histogram_analysis = HistogramAnalysis(self)
-			self.histogram_analysis.init_ui(self.histogram_tab)
+		elif tab_text == "Pair Plot":
+			if self.pairplot_analysis is None:
+				self.pairplot_analysis = PairPlotAnalysis(self)
+			self.pairplot_analysis.init_ui()
 		elif tab_text == "Liniendiagramm":
 			if self.line_chart_analysis is None:
 				self.line_chart_analysis = LineChartAnalysis(self)
@@ -156,7 +157,10 @@ class DataAnalysisApp:
 	def on_dataframe_selected(self, event=None):
 		self.df = self.dataframes[self.dataframes_combobox.get()]
 		self.update_column_checklist()
-		self.rel_analysis.load_argument_values()
+		if self.rel_analysis:
+			self.rel_analysis.load_argument_values()
+		if self.pairplot_analysis:
+			self.pairplot_analysis.load_argument_values()
 		self.x_axis_combobox['values'] = list(self.df.columns)
 
 
