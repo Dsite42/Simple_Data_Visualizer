@@ -31,28 +31,7 @@ class PairPlotAnalysis(BaseAnalysis):
  
  
 	def create_plot_args(self, data):
-		selected_columns = self.main_app.get_selected_columns()  
-		#if self.main_app.x_axis_combobox.get() != "":
-		#	x_axis = self.main_app.x_axis_combobox.get()
-		#else:
-		#	x_axis = selected_columns[0]
-		#
-		#y_axis = [col for col in selected_columns if col != x_axis]
-  #
-		#if len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != ""):
-		#	all_columns = list(data.columns)
-		#	if self.main_app.x_axis_combobox.get() == "":
-		#		id_vars = [col for col in all_columns if col not in selected_columns[1:]]
-		#	else:
-		#		id_vars = [col for col in all_columns if col not in selected_columns or col == x_axis]
-		#	melted_df = data.melt(id_vars=id_vars, value_vars=y_axis, var_name='Measurement', value_name='Value')
-		#	if self.main_app.use_plotly.get() == False:
-		#		plot_args = {"x": x_axis, "y": "Value", "hue": "Measurement", "data": melted_df} 
-		#	else:
-		#		plot_args = {"x": x_axis, "y": "Value", "color": "Measurement", "data_frame": melted_df}
-		#else:
-		#	plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
-   
+		selected_columns = self.main_app.get_selected_columns()     
 		plot_args = {"vars": selected_columns if len(selected_columns) >= 1 else None, "data": data}
 		if self.main_app.use_plotly.get() == False:
 			if self.hue.get():
@@ -65,18 +44,10 @@ class PairPlotAnalysis(BaseAnalysis):
 				plot_args["corner"] = self.corner.get()
     
 		else:
-			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
+			plot_args = {"dimensions": selected_columns if len(selected_columns) >= 1 else None, "data_frame": data}
 			if len(selected_columns) == 2 and self.hue.get():
 				plot_args["color"] = self.hue.get()
-			if self.style.get():
-				plot_args["symbol"] = self.style.get()	
-			if self.row.get():
-				plot_args["facet_row"] = self.row.get()
-			if self.col.get():
-				plot_args["facet_col"] = self.col.get()
-		
 
-		
 		return plot_args
  
 	def show_pair_plot(self, refresh_plot):
@@ -101,13 +72,9 @@ class PairPlotAnalysis(BaseAnalysis):
 					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
 				fig = px.line(**plot_args)
 			else:
-				fig = px.scatter(**plot_args)
+				fig = px.scatter_matrix(**plot_args)
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
-			if self.title_x_axis.get():
-				fig.update_layout(xaxis_title=self.title_x_axis.get())
-			if self.title_y_axis.get():
-				fig.update_layout(yaxis_title=self.title_y_axis.get())
 			fig.update_layout(autosize=True, width=None, height=None)
 			if self.plot_with.get() and self.plot_hight.get():
 				fig.update_layout(width=float(self.plot_with.get()), height=float(self.plot_hight.get()))
@@ -119,8 +86,6 @@ class PairPlotAnalysis(BaseAnalysis):
 				self.main_app.open_windows.append(self.display_plot(fig))
 			else:
 				self.main_app.open_windows.append(self.display_plotly_plot(fig))
-
-
 
 
 		def on_click(event):
@@ -154,8 +119,6 @@ class PairPlotAnalysis(BaseAnalysis):
 		fig.subplots_adjust(top=0.94)
 
 		self.main_app.open_windows.append(self.display_plot(fig))
-
-
 
 
 	def init_ui(self):
@@ -224,9 +187,7 @@ class PairPlotAnalysis(BaseAnalysis):
 		self.corner_label.grid(row=3, column=0, padx=5, pady=5, sticky='w')
 		self.corner_combobox = ttk.Combobox(self.plot_arguments_frame, textvariable=self.corner)
 		self.corner_combobox.grid(row=3, column=1, padx=5, pady=5, sticky='w')
-  
-  
-  
+
 		self.load_argument_values()
 
 
@@ -238,7 +199,6 @@ class PairPlotAnalysis(BaseAnalysis):
 			self.main_app.pairplot_analysis.corner_combobox['values'] = [True, False]
 
   
-
 	def toggle_plot_arguments_frame(self):
 		if self.plot_arguments_frame_visible:
 			self.plot_arguments_frame.pack_forget()
