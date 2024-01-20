@@ -9,6 +9,7 @@ from PairPlotAnalysis import PairPlotAnalysis
 from ManualPlotAnalysis import ManualPlotAnalysis
 from ConsoleOutput import ConsoleOutput
 from ManipulateDataWindow import ManipulateDataWindow
+from JointPlotAnalysis import JointPlotAnalysis
 import sys
 from cefpython3 import cefpython as cef
 
@@ -98,13 +99,13 @@ class DataAnalysisApp:
 		self.tab_control = ttk.Notebook(self.tk_root)
 		self.rel_tab_frame = ttk.Frame(self.tab_control)
 		self.pairplot_tab_frame = ttk.Frame(self.tab_control)
-		self.line_chart_tab = ttk.Frame(self.tab_control)
+		self.jointplot_tab_frame = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
 		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
 		self.tab_control.add(self.pairplot_tab_frame, text='Pair Plot')
-		self.tab_control.add(self.line_chart_tab, text='Liniendiagramm')
+		self.tab_control.add(self.jointplot_tab_frame, text='Joint Plot')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
 		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
   
@@ -112,7 +113,7 @@ class DataAnalysisApp:
   
 		self.rel_analysis = RelPlotAnalysis(self)
 		self.pairplot_analysis = None
-		self.line_chart_analysis = None
+		self.jointplot_analysis = None
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
 		self.console_output = ConsoleOutput(self)
 		sys.stdout = self.console_output
@@ -141,10 +142,10 @@ class DataAnalysisApp:
 			if self.pairplot_analysis is None:
 				self.pairplot_analysis = PairPlotAnalysis(self)
 			self.pairplot_analysis.init_ui()
-		elif tab_text == "Liniendiagramm":
-			if self.line_chart_analysis is None:
-				self.line_chart_analysis = LineChartAnalysis(self)
-			self.line_chart_analysis.init_ui(self.line_chart_tab)
+		elif tab_text == "Joint Plot":
+			if self.jointplot_analysis is None:
+				self.jointplot_analysis = JointPlotAnalysis(self)
+			self.jointplot_analysis.init_ui()
 		elif tab_text == "Manual Plot":
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
@@ -161,6 +162,8 @@ class DataAnalysisApp:
 			self.rel_analysis.load_argument_values()
 		if self.pairplot_analysis:
 			self.pairplot_analysis.load_argument_values()
+		if self.jointplot_analysis:
+			self.jointplot_analysis.load_argument_values()
 		self.x_axis_combobox['values'] = list(self.df.columns)
 
 
