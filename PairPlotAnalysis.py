@@ -66,6 +66,12 @@ class PairPlotAnalysis(BaseAnalysis):
       
 		else:
 			# Create a Plotly pair plot
+   
+			# Not supported plots in plotly: kde, hist, reg
+			if self.kind.get() == "kde" or self.kind.get() == "hist" or self.kind.get() == "reg":
+				messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
+				return
+
 			plot_args = self.create_plot_args(self.main_app.df)
 			fig = px.scatter_matrix(**plot_args)
 			if self.plot_title.get():

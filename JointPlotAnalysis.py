@@ -98,12 +98,12 @@ class JointPlotAnalysis(BaseAnalysis):
 		else:
 			# Create a Plotly joint plot
    
-			plot_args = self.create_plot_args(self.main_app.df)
 			# Not supported plots in plotly: hex, resid
 			if self.kind.get() == "hex" or self.kind.get() == "resid":
 				messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
 				return
    
+			plot_args = self.create_plot_args(self.main_app.df)
 			if self.kind.get() == "scatter" or self.kind.get() == "" or self.kind.get() == "reg":
 				fig = px.scatter(**plot_args)
 			elif self.kind.get() == "kde":
