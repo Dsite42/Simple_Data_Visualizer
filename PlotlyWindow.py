@@ -47,7 +47,6 @@ class PlotlyWindow:
     def display_plot(self, fig):
         self.fig = fig
         self.adjust_window_size()
-        print(self.frame_cefpython.winfo_width(), self.frame_cefpython.winfo_height())
         plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn', div_id='my-plot-div')
         data_url = f"data:text/html;charset=utf-8;base64,{base64.b64encode(plot_html.encode()).decode()}"
         if not hasattr(self, 'browser'):

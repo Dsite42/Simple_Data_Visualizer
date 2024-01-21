@@ -67,12 +67,7 @@ class PairPlotAnalysis(BaseAnalysis):
 		else:
 			# Create a Plotly pair plot
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "line":
-				if isinstance(plot_args["data_frame"].index, pd.DatetimeIndex) == False:
-					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
-				fig = px.line(**plot_args)
-			else:
-				fig = px.scatter_matrix(**plot_args)
+			fig = px.scatter_matrix(**plot_args)
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
 			fig.update_layout(autosize=True, width=None, height=None)

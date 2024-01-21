@@ -63,14 +63,20 @@ class JointPlotAnalysis(BaseAnalysis):
     
 		else:
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
-			if len(selected_columns) == 2 and self.hue.get():
+			if len(selected_columns) == 2 and self.hue.get() and self.kind.get() != "hist":
 				plot_args["color"] = self.hue.get()
-			if self.style.get():
-				plot_args["symbol"] = self.style.get()	
-			if self.row.get():
-				plot_args["facet_row"] = self.row.get()
-			if self.col.get():
-				plot_args["facet_col"] = self.col.get()
+			if self.kind.get() == "scatter" or self.kind.get() == "":
+				plot_args["opacity"] = 0.3
+				plot_args["marginal_x"] = "histogram"
+				plot_args["marginal_y"] = "histogram"
+			elif self.kind.get() == "kde" or self.kind.get() == "hist":
+				plot_args["marginal_x"] = "histogram"
+				plot_args["marginal_y"] = "histogram"
+			elif self.kind.get() == "reg":
+				plot_args["opacity"] = 0.3
+				plot_args["trendline"] = "ols"
+				plot_args["marginal_x"] = "histogram"
+				plot_args["marginal_y"] = "histogram"
 		
 		
 		return plot_args
@@ -91,13 +97,20 @@ class JointPlotAnalysis(BaseAnalysis):
       
 		else:
 			# Create a Plotly joint plot
+   
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "line":
-				if isinstance(plot_args["data_frame"].index, pd.DatetimeIndex) == False:
-					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
-				fig = px.line(**plot_args)
-			else:
+			# Not supported plots in plotly: hex, resid
+			if self.kind.get() == "hex" or self.kind.get() == "resid":
+				messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
+				return
+   
+			if self.kind.get() == "scatter" or self.kind.get() == "" or self.kind.get() == "reg":
 				fig = px.scatter(**plot_args)
+			elif self.kind.get() == "kde":
+				fig = px.density_contour(**plot_args)
+			elif self.kind.get() == "hist":
+				fig = px.density_heatmap(**plot_args)
+
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
 			fig.update_layout(autosize=True, width=None, height=None)
