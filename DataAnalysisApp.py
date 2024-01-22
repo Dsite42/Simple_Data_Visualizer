@@ -10,6 +10,7 @@ from ManualPlotAnalysis import ManualPlotAnalysis
 from ConsoleOutput import ConsoleOutput
 from ManipulateDataWindow import ManipulateDataWindow
 from JointPlotAnalysis import JointPlotAnalysis
+from DisPlotAnalysis import DisPlotAnalysis
 import sys
 from cefpython3 import cefpython as cef
 
@@ -100,12 +101,14 @@ class DataAnalysisApp:
 		self.rel_tab_frame = ttk.Frame(self.tab_control)
 		self.pairplot_tab_frame = ttk.Frame(self.tab_control)
 		self.jointplot_tab_frame = ttk.Frame(self.tab_control)
+		self.displot_tab_frame = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
 		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
 		self.tab_control.add(self.pairplot_tab_frame, text='Pair Plot')
 		self.tab_control.add(self.jointplot_tab_frame, text='Joint Plot')
+		self.tab_control.add(self.displot_tab_frame, text='Dis Plot')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
 		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
   
@@ -114,6 +117,7 @@ class DataAnalysisApp:
 		self.rel_analysis = RelPlotAnalysis(self)
 		self.pairplot_analysis = None
 		self.jointplot_analysis = None
+		self.displot_analysis = None
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
 		self.console_output = ConsoleOutput(self)
 		sys.stdout = self.console_output
@@ -146,6 +150,10 @@ class DataAnalysisApp:
 			if self.jointplot_analysis is None:
 				self.jointplot_analysis = JointPlotAnalysis(self)
 			self.jointplot_analysis.init_ui()
+		elif tab_text == "Dis Plot":
+			if self.displot_analysis is None:
+				self.displot_analysis = DisPlotAnalysis(self)
+			self.displot_analysis.init_ui()
 		elif tab_text == "Manual Plot":
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
@@ -164,6 +172,8 @@ class DataAnalysisApp:
 			self.pairplot_analysis.load_argument_values()
 		if self.jointplot_analysis:
 			self.jointplot_analysis.load_argument_values()
+		if self.displot_analysis:
+			self.displot_analysis.load_argument_values()
 		self.x_axis_combobox['values'] = list(self.df.columns)
 
 
