@@ -34,11 +34,7 @@ class DisPlotAnalysis(BaseAnalysis):
  
  
 	def create_plot_args(self, data):
-		selected_columns = self.main_app.get_selected_columns()  
-		if len(selected_columns) > 1 and self.kind.get() == "ecdf":
-			messagebox.showinfo("Information", "ECDF is not supported for more than one column")
-			return
-		
+		selected_columns = self.main_app.get_selected_columns()  		
 		if self.main_app.x_axis_combobox.get() != "":
 			x_axis = self.main_app.x_axis_combobox.get()
 		elif len(selected_columns) != 0:
@@ -69,7 +65,7 @@ class DisPlotAnalysis(BaseAnalysis):
 				plot_args["hue"] = self.hue.get()
 			if self.kind.get():
 				plot_args["kind"] = self.kind.get()
-			if self.rug.get():
+			if self.rug.get() == "True":
 				plot_args["rug"] = self.rug.get()
 			if self.row.get():
 				plot_args["row"] = self.row.get()
@@ -77,23 +73,31 @@ class DisPlotAnalysis(BaseAnalysis):
 				plot_args["col"] = self.col.get()
     
 		else:
-			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
-			if len(selected_columns) == 2 and self.hue.get():
+			if "data" in plot_args:
+				del plot_args["data"]
+			if "data_frame" not in plot_args:
+				plot_args["data_frame"] = data
+			if self.hue.get():
 				plot_args["color"] = self.hue.get()
-			if self.style.get():
-				plot_args["symbol"] = self.style.get()	
+			if self.rug.get() == "True":
+				if self.kind.get() == "hist" or self.kind.get() == "ecdf":
+					plot_args["marginal"] = "rug"
+				elif self.kind.get() == "kde":
+					plot_args["marginal_x"] = "rug"
+					plot_args["marginal_y"] = "rug"
 			if self.row.get():
 				plot_args["facet_row"] = self.row.get()
 			if self.col.get():
 				plot_args["facet_col"] = self.col.get()
 		
-
-		
 		return plot_args
  
 	def show_dis_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		
+		if len(selected_columns) > 1 and self.kind.get() == "ecdf":
+			messagebox.showinfo("Information", "ECDF is not supported for more than one column")
+			return
+
 		if self.main_app.use_plotly.get() == False:
   			# Create a Seaborn dis plot
 			plot_args = self.create_plot_args(self.main_app.df)
@@ -112,12 +116,13 @@ class DisPlotAnalysis(BaseAnalysis):
 		else:
 			# Create a Plotly dis plot
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "line":
-				if isinstance(plot_args["data_frame"].index, pd.DatetimeIndex) == False:
-					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
-				fig = px.line(**plot_args)
-			else:
-				fig = px.scatter(**plot_args)
+			if self.kind.get() == "hist" or self.kind.get() == "":
+				fig = px.histogram(**plot_args)
+			elif self.kind.get() == "kde":
+				fig = px.density_contour(**plot_args)
+			elif self.kind.get() == "ecdf":
+				fig = px.ecdf(**plot_args)
+
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
 			if self.title_x_axis.get():
@@ -135,8 +140,6 @@ class DisPlotAnalysis(BaseAnalysis):
 				self.main_app.open_windows.append(self.display_plot(fig))
 			else:
 				self.main_app.open_windows.append(self.display_plotly_plot(fig))
-
-
 
 		# Save the axes and the corresponding facet title
 		if self.main_app.use_plotly.get() == False:
@@ -181,8 +184,6 @@ class DisPlotAnalysis(BaseAnalysis):
 			self.display_refresh_plot(fig)
 		else:
 			self.main_app.open_windows.append(self.display_plot(fig))
-
-
 
 
 	def init_ui(self):
