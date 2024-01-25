@@ -11,6 +11,7 @@ from ConsoleOutput import ConsoleOutput
 from ManipulateDataWindow import ManipulateDataWindow
 from JointPlotAnalysis import JointPlotAnalysis
 from DisPlotAnalysis import DisPlotAnalysis
+from CatPlotAnalysis import CatPlotAnalysis
 import sys
 from cefpython3 import cefpython as cef
 
@@ -20,7 +21,7 @@ class DataAnalysisApp:
 	def __init__(self, operating_system):
 		self.tk_root = tk.Tk()
 		#tk_root.geometry("400x800")
-		self.tk_root.title("Einfaches Datenanalyse-Programm")
+		self.tk_root.title("Simple Data Analyzer")
 		self.tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
 		## set the scaling
 		#scale_factor = 1.0
@@ -102,6 +103,7 @@ class DataAnalysisApp:
 		self.pairplot_tab_frame = ttk.Frame(self.tab_control)
 		self.jointplot_tab_frame = ttk.Frame(self.tab_control)
 		self.displot_tab_frame = ttk.Frame(self.tab_control)
+		self.catplot_tab_frame = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
@@ -109,6 +111,7 @@ class DataAnalysisApp:
 		self.tab_control.add(self.pairplot_tab_frame, text='Pair Plot')
 		self.tab_control.add(self.jointplot_tab_frame, text='Joint Plot')
 		self.tab_control.add(self.displot_tab_frame, text='Dis Plot')
+		self.tab_control.add(self.catplot_tab_frame, text='Cat Plot')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
 		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
   
@@ -118,6 +121,7 @@ class DataAnalysisApp:
 		self.pairplot_analysis = None
 		self.jointplot_analysis = None
 		self.displot_analysis = None
+		self.catplot_analysis = None
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
 		self.console_output = ConsoleOutput(self)
 		sys.stdout = self.console_output
@@ -154,6 +158,10 @@ class DataAnalysisApp:
 			if self.displot_analysis is None:
 				self.displot_analysis = DisPlotAnalysis(self)
 			self.displot_analysis.init_ui()
+		elif tab_text == "Cat Plot":
+			if self.catplot_analysis is None:
+				self.catplot_analysis = CatPlotAnalysis(self)
+			self.catplot_analysis.init_ui()
 		elif tab_text == "Manual Plot":
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
@@ -174,6 +182,8 @@ class DataAnalysisApp:
 			self.jointplot_analysis.load_argument_values()
 		if self.displot_analysis:
 			self.displot_analysis.load_argument_values()
+		if self.catplot_analysis:
+			self.catplot_analysis.load_argument_values()
 		self.x_axis_combobox['values'] = list(self.df.columns)
 
 
