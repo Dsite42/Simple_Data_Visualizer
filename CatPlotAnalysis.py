@@ -8,7 +8,6 @@ import seaborn as sns
 sns.set(style="darkgrid")
 import plotly.express as px
 
-
 import io
 from PIL import Image
 
