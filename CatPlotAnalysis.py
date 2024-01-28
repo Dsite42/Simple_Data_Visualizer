@@ -7,6 +7,8 @@ from BaseAnalysis import BaseAnalysis
 import seaborn as sns
 sns.set(style="darkgrid")
 import plotly.express as px
+import numpy as np
+import scipy.stats as stats
 
 import io
 from PIL import Image
@@ -84,9 +86,6 @@ class CatPlotAnalysis(BaseAnalysis):
  
 	def show_cat_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
-		if len(selected_columns) > 1 and self.kind.get() == "ecdf":
-			messagebox.showinfo("Information", "ECDF is not supported for more than one column")
-			return
 
 		if self.main_app.use_plotly.get() == False:
   			# Create a Seaborn cat plot
@@ -105,13 +104,24 @@ class CatPlotAnalysis(BaseAnalysis):
       
 		else:
 			# Create a Plotly cat plot
+			# Not supported plots in plotly: hex, resid
+			if self.kind.get() == "swarm" or self.kind.get() == "boxen" or self.kind.get() == "point":
+				messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
+				return
+
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "hist" or self.kind.get() == "":
+			if self.kind.get() == "strip" or self.kind.get() == "":
+				fig = px.strip(**plot_args)
+			elif self.kind.get() == "box":
+				fig = px.box(**plot_args)
+			elif self.kind.get() == "violin":
+				fig = px.violin(**plot_args, box=True)
+			elif self.kind.get() == "bar":
+				fig = self.create_px_bar_plot_args(plot_args)
+			elif self.kind.get() == "count":
 				fig = px.histogram(**plot_args)
-			elif self.kind.get() == "kde":
-				fig = px.density_contour(**plot_args)
-			elif self.kind.get() == "ecdf":
-				fig = px.ecdf(**plot_args)
+				fig.update_layout(bargap=0.1)
+
 
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
@@ -273,3 +283,24 @@ class CatPlotAnalysis(BaseAnalysis):
 			self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
 			self.toggle_arguments_button.config(text="Hide Plot Arguments")
 		self.plot_arguments_frame_visible = not self.plot_arguments_frame_visible
+  
+	def create_px_bar_plot_args(self, plot_args):
+		df = plot_args.get("data_frame")
+		x_axis = plot_args.get("x")
+		y_axis = plot_args.get("y")
+	
+		def mean_confidence_interval(data, confidence=0.95):
+			a = 1.0 * np.array(data)
+			n = len(a)
+			m, se = np.mean(a), stats.sem(a)
+			h = se * stats.t.ppf((1 + confidence) / 2., n-1)
+			return m, m-h, m+h
+
+		aggregated_df = df.groupby(x_axis)[y_axis].apply(mean_confidence_interval).reset_index()
+		aggregated_df[['mean', 'lower', 'upper']] = pd.DataFrame(aggregated_df[y_axis].tolist(), index=aggregated_df.index)
+		plot_args = {}
+
+		fig = px.bar(aggregated_df, x=x_axis, y='mean',
+					error_y_minus=aggregated_df['mean'] - aggregated_df['lower'],
+					error_y=aggregated_df['upper'] - aggregated_df['mean'])
+		return fig
