@@ -32,6 +32,10 @@ class ManipulateDataWindow:
 		
 		set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
 		set_refresh_button.grid(row=0, column=0, padx=300, pady=5, sticky='w')
+  
+		show_datatypes_button = tk.Button(self.window, text="Show datatypes", command=lambda: messagebox.showinfo("Datatypes", str(self.main_app.df.dtypes)))
+		show_datatypes_button.grid(row=0, column=0, padx=415, pady=5, sticky='w')
+
 
 		# Frame for Treeview and Scrollbars
 		self.treeview_frame = tk.Frame(self.window)
@@ -82,6 +86,14 @@ class ManipulateDataWindow:
 		# Button to delete selected columns
 		self.delete_columns_button = tk.Button(self.data_manipulation_frame, text="Delete columns", command=self.delete_columns)
 		self.delete_columns_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+  
+		# Set datatype
+		self.set_datatype_label = tk.Label(self.data_manipulation_frame, text="Set datatype:")
+		self.set_datatype_label.grid(row=0, column=2, padx=5, pady=5, sticky='w')
+		self.set_datatype_combobox = ttk.Combobox(self.data_manipulation_frame, values=['int', 'float', 'str', 'category'], state="readonly")
+		self.set_datatype_combobox.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+		self.set_datatype_button = tk.Button(self.data_manipulation_frame, text="Set", command=self.set_datatype)
+		self.set_datatype_button.grid(row=0, column=4, padx=5, pady=5, sticky='w')
 
 	   
 		# set datetime index
@@ -319,3 +331,19 @@ class ManipulateDataWindow:
 	def reset_filter(self):
 		self.main_app.df = self.main_app.dataframes[self.main_app.dataframes_combobox.get()]
 		self.refresh_treeview(False)
+  
+  
+	def set_datatype(self):
+		selected_columns = [col for col, var in self.column_vars.items() if var.get()]
+		try:
+			for col in selected_columns:
+				if self.set_datatype_combobox.get() == 'int':
+					self.main_app.df[col] = self.main_app.df[col].astype(int)
+				elif self.set_datatype_combobox.get() == 'float':
+					self.main_app.df[col] = self.main_app.df[col].astype(float)
+				elif self.set_datatype_combobox.get() == 'str':
+					self.main_app.df[col] = self.main_app.df[col].astype('str')
+				elif self.set_datatype_combobox.get() == 'category':
+					self.main_app.df[col] = self.main_app.df[col].astype('category')
+		except Exception as e:
+			messagebox.showerror("Error", f"Error at setting datatype: {e}")
