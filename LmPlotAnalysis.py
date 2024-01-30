@@ -79,12 +79,12 @@ class LmPlotAnalysis(BaseAnalysis):
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
 			if len(selected_columns) == 2 and self.hue.get():
 				plot_args["color"] = self.hue.get()
-			if self.style.get():
-				plot_args["symbol"] = self.style.get()	
 			if self.row.get():
 				plot_args["facet_row"] = self.row.get()
 			if self.col.get():
 				plot_args["facet_col"] = self.col.get()
+			plot_args["trendline"] = "ols"
+
 		
 
 		
@@ -114,12 +114,7 @@ class LmPlotAnalysis(BaseAnalysis):
 		else:
 			# Create a Plotly lm plot
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "line":
-				if isinstance(plot_args["data_frame"].index, pd.DatetimeIndex) == False:
-					plot_args["data_frame"] = plot_args["data_frame"].groupby(plot_args["x"]).mean().reset_index()
-				fig = px.line(**plot_args)
-			else:
-				fig = px.scatter(**plot_args)
+			fig = px.scatter(**plot_args)
 			if self.plot_title.get():
 				fig.update_layout(title=self.plot_title.get())
 			if self.title_x_axis.get():
