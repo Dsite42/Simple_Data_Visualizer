@@ -100,7 +100,7 @@ class DataAnalysisApp:
 		# Tab Control
 		self.current_tab = None
 		self.tab_control = ttk.Notebook(self.tk_root)
-		self.rel_tab_frame = ttk.Frame(self.tab_control)
+		self.relplot_tab_frame = ttk.Frame(self.tab_control)
 		self.pairplot_tab_frame = ttk.Frame(self.tab_control)
 		self.jointplot_tab_frame = ttk.Frame(self.tab_control)
 		self.displot_tab_frame = ttk.Frame(self.tab_control)
@@ -109,7 +109,7 @@ class DataAnalysisApp:
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
-		self.tab_control.add(self.rel_tab_frame, text='Rel Plot')
+		self.tab_control.add(self.relplot_tab_frame, text='Rel Plot')
 		self.tab_control.add(self.pairplot_tab_frame, text='Pair Plot')
 		self.tab_control.add(self.jointplot_tab_frame, text='Joint Plot')
 		self.tab_control.add(self.displot_tab_frame, text='Dis Plot')
@@ -120,7 +120,7 @@ class DataAnalysisApp:
   
 		self.tab_control.pack(expand=1, fill="both")
   
-		self.rel_analysis = RelPlotAnalysis(self)
+		self.relplot_analysis = RelPlotAnalysis(self)
 		self.pairplot_analysis = None
 		self.jointplot_analysis = None
 		self.displot_analysis = None
@@ -149,7 +149,7 @@ class DataAnalysisApp:
 			self.manual_plot_analysis.save_code_text()
 
 		if tab_text == "Rel Plot":
-			self.rel_analysis.init_ui()
+			self.relplot_analysis.init_ui()
 		elif tab_text == "Pair Plot":
 			if self.pairplot_analysis is None:
 				self.pairplot_analysis = PairPlotAnalysis(self)
@@ -182,8 +182,8 @@ class DataAnalysisApp:
 	def on_dataframe_selected(self, event=None):
 		self.df = self.dataframes[self.dataframes_combobox.get()]
 		self.update_column_checklist()
-		if self.rel_analysis:
-			self.rel_analysis.load_argument_values()
+		if self.relplot_analysis:
+			self.relplot_analysis.load_argument_values()
 		if self.pairplot_analysis:
 			self.pairplot_analysis.load_argument_values()
 		if self.jointplot_analysis:
@@ -219,8 +219,8 @@ class DataAnalysisApp:
 		return [col_checkbox["text"] for col_checkbox in self.columns_to_analyze.values() if col_checkbox["var"].get()]
 
 	def show_rel_plot(self):
-		self.rel_analysis = RelPlotAnalysis(self)
-		self.rel_analysis.show_rel_plot()
+		self.relplot_analysis = RelPlotAnalysis(self)
+		self.relplot_analysis.show_rel_plot()
 
 	def cef_loop(self):
 		cef.MessageLoopWork()

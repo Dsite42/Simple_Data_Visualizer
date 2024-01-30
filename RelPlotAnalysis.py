@@ -186,12 +186,12 @@ class RelPlotAnalysis(BaseAnalysis):
 	def init_ui(self):
 		self.plot_arguments_frame_visible = True
   		# Remove previously created widgets in the parent_frame
-		for widget in self.main_app.rel_tab_frame.winfo_children():
+		for widget in self.main_app.relplot_tab_frame.winfo_children():
 			widget.destroy()
    
 
 		# Frame for buttons
-		button_frame = tk.Frame(self.main_app.rel_tab_frame)
+		button_frame = tk.Frame(self.main_app.relplot_tab_frame)
 		button_frame.pack(padx=5, pady=5, anchor='c')
 
 		# Button to show Rel Plot in new window
@@ -208,7 +208,7 @@ class RelPlotAnalysis(BaseAnalysis):
 
 
 		# Frame for main plot args
-		main_plot_arguments_frame = tk.Frame(self.main_app.rel_tab_frame)
+		main_plot_arguments_frame = tk.Frame(self.main_app.relplot_tab_frame)
 		main_plot_arguments_frame.pack(padx=5, pady=5, anchor='w')
 		# Entry for plot title
 		title_label = tk.Label(main_plot_arguments_frame, text="Plot title:")
@@ -237,7 +237,7 @@ class RelPlotAnalysis(BaseAnalysis):
 		plot_hight_entry.grid(row=4, column=1, padx=5)
 
 		# Frame for plot arguments
-		self.plot_arguments_frame = tk.Frame(self.main_app.rel_tab_frame)
+		self.plot_arguments_frame = tk.Frame(self.main_app.relplot_tab_frame)
 		self.plot_arguments_frame.pack(padx=5, pady=5, fill='x')
 		# Kind
 		self.kind_label = tk.Label(self.plot_arguments_frame, text="Kind:")
@@ -275,12 +275,12 @@ class RelPlotAnalysis(BaseAnalysis):
 
 	def load_argument_values(self):
 		if self.main_app.df is not None:
-			self.main_app.rel_analysis.kind_combobox['values'] = ['scatter', 'line']
-			self.main_app.rel_analysis.hue_combobox['values'] = list(self.main_app.df.columns)
-			self.main_app.rel_analysis.size_combobox['values'] = list(self.main_app.df.columns)
-			self.main_app.rel_analysis.style_combobox['values'] = list(self.main_app.df.columns)
-			self.main_app.rel_analysis.row_combobox['values'] = list(self.main_app.df.columns)
-			self.main_app.rel_analysis.col_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.relplot_analysis.kind_combobox['values'] = ['scatter', 'line']
+			self.main_app.relplot_analysis.hue_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.relplot_analysis.size_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.relplot_analysis.style_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.relplot_analysis.row_combobox['values'] = list(self.main_app.df.columns)
+			self.main_app.relplot_analysis.col_combobox['values'] = list(self.main_app.df.columns)
 
   
 
