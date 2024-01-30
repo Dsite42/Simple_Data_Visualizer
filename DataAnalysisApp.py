@@ -12,6 +12,7 @@ from ManipulateDataWindow import ManipulateDataWindow
 from JointPlotAnalysis import JointPlotAnalysis
 from DisPlotAnalysis import DisPlotAnalysis
 from CatPlotAnalysis import CatPlotAnalysis
+from LmPlotAnalysis import LmPlotAnalysis
 import sys
 from cefpython3 import cefpython as cef
 
@@ -104,6 +105,7 @@ class DataAnalysisApp:
 		self.jointplot_tab_frame = ttk.Frame(self.tab_control)
 		self.displot_tab_frame = ttk.Frame(self.tab_control)
 		self.catplot_tab_frame = ttk.Frame(self.tab_control)
+		self.lmplot_tab_frame = ttk.Frame(self.tab_control)
 		self.manual_plot_tab_frame = ttk.Frame(self.tab_control)
 		self.console_output_tab_frame = ttk.Frame(self.tab_control)
 
@@ -112,6 +114,7 @@ class DataAnalysisApp:
 		self.tab_control.add(self.jointplot_tab_frame, text='Joint Plot')
 		self.tab_control.add(self.displot_tab_frame, text='Dis Plot')
 		self.tab_control.add(self.catplot_tab_frame, text='Cat Plot')
+		self.tab_control.add(self.lmplot_tab_frame, text='Lm Plot')
 		self.tab_control.add(self.manual_plot_tab_frame, text='Manual Plot')
 		self.tab_control.add(self.console_output_tab_frame, text='Console Output')
   
@@ -122,6 +125,7 @@ class DataAnalysisApp:
 		self.jointplot_analysis = None
 		self.displot_analysis = None
 		self.catplot_analysis = None
+		self.lmplot_analysis = None
 		self.manual_plot_analysis = ManualPlotAnalysis(self)
 		self.console_output = ConsoleOutput(self)
 		sys.stdout = self.console_output
@@ -162,6 +166,10 @@ class DataAnalysisApp:
 			if self.catplot_analysis is None:
 				self.catplot_analysis = CatPlotAnalysis(self)
 			self.catplot_analysis.init_ui()
+		elif tab_text == "Lm Plot":
+			if self.lmplot_analysis is None:
+				self.lmplot_analysis = LmPlotAnalysis(self)
+			self.lmplot_analysis.init_ui()
 		elif tab_text == "Manual Plot":
 			if self.manual_plot_analysis is None:
 				self.manual_plot_analysis = ManualPlotAnalysis(self)
@@ -184,6 +192,8 @@ class DataAnalysisApp:
 			self.displot_analysis.load_argument_values()
 		if self.catplot_analysis:
 			self.catplot_analysis.load_argument_values()
+		if self.lmplot_analysis:
+			self.lmplot_analysis.load_argument_values()
 		self.x_axis_combobox['values'] = list(self.df.columns)
 
 
