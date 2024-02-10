@@ -67,7 +67,7 @@ class DataAnalysisApp:
 			# Number of plot rows
 		self.multi_plot_rows_label = tk.Label(windowPlotType, text="rows:")
 		self.multi_plot_rows_label.grid(row=0, column=2, padx=5, pady=5, sticky='w')
-		self.multi_plot_rows_var = tk.IntVar(value=1)
+		self.multi_plot_rows_var = tk.IntVar()
 		self.multi_plot_rows_entry = tk.Entry(windowPlotType, textvariable=self.multi_plot_rows_var, width=5)
 		self.multi_plot_rows_entry.grid(row=0, column=3, padx=5, pady=5, sticky='w')
 			# Number of plot columns
