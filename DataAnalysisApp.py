@@ -50,10 +50,33 @@ class DataAnalysisApp:
 		data_manipulation_button = tk.Button(input_data_frame, text="Manipulate Data", command=lambda: ManipulateDataWindow(self))
 		data_manipulation_button.pack(side=tk.RIGHT, padx=5, pady=5)
   
-		# checkbox for use plotly
+  
+		# WindowPlotType
+		windowPlotType = tk.Frame(self.tk_root)
+		windowPlotType.pack(padx=5, pady=5)
+  
+			#checkbox for use plotly
 		self.use_plotly = tk.BooleanVar(value=False)
-		self.use_plotly_checkbox = tk.Checkbutton(input_data_frame, text="Use Plotly", variable=self.use_plotly)
-		self.use_plotly_checkbox.pack(side=tk.RIGHT, padx=5, pady=5)
+		self.use_plotly_checkbox = tk.Checkbutton(windowPlotType, text="Use Plotly", variable=self.use_plotly)
+		self.use_plotly_checkbox.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+  
+			#checkbox for Multiplot
+		self.multiplot = tk.BooleanVar(value=False)
+		self.multiplot_checkbox = tk.Checkbutton(windowPlotType, text="Multiplot", variable=self.multiplot)
+		self.multiplot_checkbox.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+			# Number of plot rows
+		self.multi_plot_rows_label = tk.Label(windowPlotType, text="rows:")
+		self.multi_plot_rows_label.grid(row=0, column=2, padx=5, pady=5, sticky='w')
+		self.multi_plot_rows_var = tk.IntVar(value=1)
+		self.multi_plot_rows_entry = tk.Entry(windowPlotType, textvariable=self.multi_plot_rows_var, width=5)
+		self.multi_plot_rows_entry.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+			# Number of plot columns
+		self.multi_plot_columns_label = tk.Label(windowPlotType, text="columns:")
+		self.multi_plot_columns_label.grid(row=0, column=4, padx=5, pady=5, sticky='w')
+		self.multi_plot_columns_var = tk.IntVar(value=1)
+		self.multi_plot_columns_entry = tk.Entry(windowPlotType, textvariable=self.multi_plot_columns_var, width=5)
+		self.multi_plot_columns_entry.grid(row=0, column=5, padx=5, pady=5, sticky='w')
+  
 
 		# dataframes
 		dataframes_frame = tk.Frame(self.tk_root)
@@ -137,7 +160,14 @@ class DataAnalysisApp:
 
 
 	def run(self):
-		self.cefpython = cef.Initialize()
+    	# Initialize CEF with the command line arguments
+		command_line_arguments = {
+    	    "no-sandbox": "",  # Note: The value is empty; the presence of the key is what matters.
+    	}
+
+    	# Set up CEF before initializing
+    	
+		self.cefpython = cef.Initialize(settings={}, switches=command_line_arguments)
 		self.tk_root.mainloop()
 
 
