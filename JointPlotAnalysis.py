@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -36,7 +37,7 @@ class JointPlotAnalysis(BaseAnalysis):
 		
 		y_axis = [col for col in selected_columns if col != x_axis]
   
-		if len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != ""):
+		if self.main_app.multiplot.get() == False and (len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != "")):
 			all_columns = list(data.columns)
 			if self.main_app.x_axis_combobox.get() == "":
 				id_vars = [col for col in all_columns if col not in selected_columns[1:]]
@@ -56,7 +57,7 @@ class JointPlotAnalysis(BaseAnalysis):
 	
    
 		if self.main_app.use_plotly.get() == False:
-			if len(selected_columns) == 2 and self.hue.get():
+			if (self.main_app.multiplot.get() or len(selected_columns) == 2) and self.hue.get():
 				plot_args["hue"] = self.hue.get()
 			if self.kind.get():
 				plot_args["kind"] = self.kind.get()
@@ -78,57 +79,26 @@ class JointPlotAnalysis(BaseAnalysis):
 				plot_args["marginal_x"] = "histogram"
 				plot_args["marginal_y"] = "histogram"
 		
-		
 		return plot_args
  
-	def show_joint_plot(self, refresh_plot):
-		selected_columns = self.main_app.get_selected_columns()  
-		if (self.kind.get() == "hex" or self.kind.get() == "reg" or self.kind.get() == "resid") and ((len(selected_columns) > 2) or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == "")):
-			messagebox.showinfo("Info", "Please select just two variables")
-			return
-		
-		if self.main_app.use_plotly.get() == False:
-  			# Create a Seaborn joint plot
-			plot_args = self.create_plot_args(self.main_app.df)
-			g = sns.jointplot(**plot_args)
-
-			fig = g.fig
-			if self.plot_with.get() and self.plot_hight.get():
-				fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
-			fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
-			fig.subplots_adjust(top=0.94)
-      
-		else:
-			# Create a Plotly joint plot
-   
-			# Not supported plots in plotly: hex, resid
-			if self.kind.get() == "hex" or self.kind.get() == "resid":
-				messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
+ 
+	# Create a Seaborn lm plot
+	def create_seaborn_plot(self, refresh_plot, plot_args):
+		if plot_args is None:
+			selected_columns = self.main_app.get_selected_columns()  
+			if len(selected_columns) < 1 or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == ""):
+				messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 				return
-   
 			plot_args = self.create_plot_args(self.main_app.df)
-			if self.kind.get() == "scatter" or self.kind.get() == "" or self.kind.get() == "reg":
-				fig = px.scatter(**plot_args)
-			elif self.kind.get() == "kde":
-				fig = px.density_contour(**plot_args)
-			elif self.kind.get() == "hist":
-				fig = px.density_heatmap(**plot_args)
-
-			if self.plot_title.get():
-				fig.update_layout(title=self.plot_title.get())
-			fig.update_layout(autosize=True, width=None, height=None)
-			if self.plot_with.get() and self.plot_hight.get():
-				fig.update_layout(width=float(self.plot_with.get()), height=float(self.plot_hight.get()))
-       
-		if refresh_plot:
-			self.display_refresh_plot(fig)
-		else:
-			if self.main_app.use_plotly.get() == False:
-				self.main_app.open_windows.append(self.display_plot(fig))
-			else:
-				self.main_app.open_windows.append(self.display_plotly_plot(fig))
-
-  
+		
+  		# Create a Seaborn joint plot
+		g = sns.jointplot(**plot_args)
+		fig = g.fig
+		if self.plot_with.get() and self.plot_hight.get():
+			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
+		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
+		fig.subplots_adjust(top=0.94)
+             
 		def on_click(event):
 			# Finden Sie heraus, welcher Subplot (Facet) geklickt wurde
 			if event.inaxes == g.ax_joint:
@@ -139,6 +109,104 @@ class JointPlotAnalysis(BaseAnalysis):
 		# add event-handeler for clicking on facets
 		if self.main_app.use_plotly.get() == False:
 			g.fig.canvas.mpl_connect('button_press_event', on_click)
+
+		if self.main_app.multiplot.get():
+			return fig
+		if refresh_plot:
+			self.display_refresh_plot(fig)
+		else:
+			self.main_app.open_windows.append(self.display_plot(fig))
+ 
+ 
+	# Create Plotly plot
+	def create_plotly_plot(self, refresh_plot):
+		selected_columns = self.main_app.get_selected_columns()  
+		if len(selected_columns) < 1 or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == ""):
+			messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
+			return			
+		
+		# Create a Plotly joint plot
+
+		# Not supported plots in plotly: hex, resid
+		if self.kind.get() == "hex" or self.kind.get() == "resid":
+			messagebox.showinfo("Info", "Plotly does not support the kind: " + self.kind.get())
+			return
+
+		plot_args = self.create_plot_args(self.main_app.df)
+		if self.kind.get() == "scatter" or self.kind.get() == "" or self.kind.get() == "reg":
+			fig = px.scatter(**plot_args)
+		elif self.kind.get() == "kde":
+			fig = px.density_contour(**plot_args)
+		elif self.kind.get() == "hist":
+			fig = px.density_heatmap(**plot_args)
+		if self.plot_title.get():
+			fig.update_layout(title=self.plot_title.get())
+		fig.update_layout(autosize=True, width=None, height=None)
+		if self.plot_with.get() and self.plot_hight.get():
+			fig.update_layout(width=float(self.plot_with.get()), height=float(self.plot_hight.get()))
+       
+		if refresh_plot:
+			self.display_refresh_plot(fig)
+		else:
+			self.main_app.open_windows.append(self.display_plotly_plot(fig))
+
+
+	# Create a multiplot
+	def create_multi_plot(self, refresh_plot):
+		selected_columns = self.main_app.get_selected_columns()
+		if len(selected_columns) == 0:
+			selected_columns = list(self.main_app.df.columns)
+		if self.main_app.multi_plot_rows_var.get() == 0 and self.main_app.multi_plot_columns_var.get() == 0:
+			messagebox.showinfo("Information", "Number of rows or columns must be greater than 0")
+			return
+		if self.main_app.multi_plot_rows_var.get() != 0 and self.main_app.multi_plot_columns_var.get() != 0 and (self.main_app.multi_plot_rows_var.get() * self.main_app.multi_plot_columns_var.get() < len(selected_columns)):
+			messagebox.showinfo("Information", "Number of rows times number of columns must be greater than or equal to the number of selected columns")
+			return
+
+		# Calculate numer of rows and columns
+		number_of_plots = len(selected_columns)
+		if self.main_app.multi_plot_rows_var.get() == 0:
+			if self.main_app.multi_plot_columns_var.get() >= number_of_plots:
+				canvas_rows = 1
+				canvas_columns = number_of_plots
+			else:
+				canvas_rows = math.ceil(number_of_plots // self.main_app.multi_plot_columns_var.get())
+				canvas_columns = self.main_app.multi_plot_columns_var.get()
+		
+		elif self.main_app.multi_plot_columns_var.get() == 0:
+			if self.main_app.multi_plot_rows_var.get() >= number_of_plots:
+				canvas_rows = number_of_plots
+				canvas_columns = 1
+			else:
+				canvas_rows = self.main_app.multi_plot_rows_var.get()
+				canvas_columns = math.ceil(number_of_plots // self.main_app.multi_plot_rows_var.get())
+		else:
+			canvas_rows = self.main_app.multi_plot_rows_var.get()
+			canvas_columns = self.main_app.multi_plot_columns_var.get()
+   
+		# Create figs
+		figures = []
+		for i in range(len(selected_columns)):
+			plot_args = self.create_plot_args(self.main_app.df)
+			plot_args["x"] = self.main_app.x_axis_combobox.get()
+			plot_args["y"] = selected_columns[i]
+			figures.append(self.create_seaborn_plot(refresh_plot, plot_args))
+		if refresh_plot:
+			self.display_refresh_multiple_plots(figures, canvas_rows, canvas_columns)
+		else:
+			self.main_app.open_windows.append(self.display_multiple_plots(figures, canvas_rows, canvas_columns))
+
+
+	def show_joint_plot(self, refresh_plot):
+		if self.hue.get() and self.main_app.use_plotly.get() == False and (self.kind.get() == "hex" or self.kind.get() == "reg" or self.kind.get() == "resid"):
+			messagebox.showinfo("Info", "Hue is not supported for the kind: " + self.kind.get())
+			
+		if self.main_app.use_plotly.get() == False and self.main_app.multiplot.get() == False:
+			self.create_seaborn_plot(refresh_plot, None)
+		elif self.main_app.multiplot.get():
+			self.create_multi_plot(refresh_plot)
+		else:
+			self.create_plotly_plot(refresh_plot)
 
 
 	def show_clicked_plot(self, x_var, y_var):
@@ -232,7 +300,6 @@ class JointPlotAnalysis(BaseAnalysis):
 			self.main_app.jointplot_analysis.hue_combobox['values'] = list(self.main_app.df.columns)
 
   
-
 	def toggle_plot_arguments_frame(self):
 		if self.plot_arguments_frame_visible:
 			self.plot_arguments_frame.pack_forget()
