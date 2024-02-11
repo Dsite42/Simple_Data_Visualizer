@@ -182,9 +182,6 @@ class CatPlotAnalysis(BaseAnalysis):
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) == 0:
 			selected_columns = list(self.main_app.df.columns)
-		#if len(selected_columns) < 1:# or self.main_app.x_axis_combobox.get() == "":
-		#	messagebox.showinfo("Information", "Select one or more Columns and define the x-axis")
-		#	return
 		if self.main_app.multi_plot_rows_var.get() == 0 and self.main_app.multi_plot_columns_var.get() == 0:
 			messagebox.showinfo("Information", "Number of rows or columns must be greater than 0")
 			return
