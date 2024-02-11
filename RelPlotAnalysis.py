@@ -34,7 +34,6 @@ class RelPlotAnalysis(BaseAnalysis):
 		self.col = tk.StringVar()
 
  
- 
 	def create_plot_args(self, data):
 		selected_columns = self.main_app.get_selected_columns()  
 		if self.main_app.x_axis_combobox.get() != "":
@@ -88,7 +87,6 @@ class RelPlotAnalysis(BaseAnalysis):
 		return plot_args
  
  
- 
 	# Create a Seaborn relational plot
 	def create_seaborn_plot(self, refresh_plot, plot_args):
      
@@ -97,9 +95,7 @@ class RelPlotAnalysis(BaseAnalysis):
 			if len(selected_columns) < 1 or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == ""):
 				messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 				return			
-			
 			plot_args = self.create_plot_args(self.main_app.df)
-
 
 		# Create a Seaborn relational plot
 		g = sns.relplot(**plot_args)
@@ -108,7 +104,7 @@ class RelPlotAnalysis(BaseAnalysis):
 		if self.title_y_axis.get() != "":
 			g.set_axis_labels(y_var=self.title_y_axis.get())
 		fig = g.fig
-		fig.plot_args = plot_args
+
 		if self.plot_with.get() and self.plot_hight.get():
 			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
 		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
@@ -146,8 +142,6 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.display_refresh_plot(fig)
 		else:
 			self.main_app.open_windows.append(self.display_plot(fig))
- 
- 
  
  
 	# Create Plotly plot
@@ -225,9 +219,6 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.display_refresh_multiple_plots(figures, canvas_rows, canvas_columns)
 		else:
 			self.main_app.open_windows.append(self.display_multiple_plots(figures, canvas_rows, canvas_columns))
-
-
-
  
  
 	def show_rel_plot(self, refresh_plot):
@@ -258,8 +249,6 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.display_refresh_plot(fig)
 		else:
 			self.main_app.open_windows.append(self.display_plot(fig))
-
-
 
 
 	def init_ui(self):
@@ -361,7 +350,6 @@ class RelPlotAnalysis(BaseAnalysis):
 			self.main_app.relplot_analysis.row_combobox['values'] = list(self.main_app.df.columns)
 			self.main_app.relplot_analysis.col_combobox['values'] = list(self.main_app.df.columns)
 
-  
 
 	def toggle_plot_arguments_frame(self):
 		if self.plot_arguments_frame_visible:
