@@ -177,6 +177,10 @@ class RelPlotAnalysis(BaseAnalysis):
 	# Create a multiplot
 	def create_multi_plot(self, refresh_plot):
 		selected_columns = self.main_app.get_selected_columns()
+		if len(selected_columns) == 0:
+			selected_columns = list(self.main_app.df.columns)
+			if self.main_app.x_axis_combobox.get() != "":
+				selected_columns.remove(self.main_app.x_axis_combobox.get())
 		if len(selected_columns) < 1 or self.main_app.x_axis_combobox.get() == "":
 			messagebox.showinfo("Information", "Select one or more Columns and define the x-axis")
 			return
