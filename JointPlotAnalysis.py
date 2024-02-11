@@ -82,7 +82,10 @@ class JointPlotAnalysis(BaseAnalysis):
 		return plot_args
  
 	def show_joint_plot(self, refresh_plot):
-		selected_columns = self.main_app.get_selected_columns()
+		selected_columns = self.main_app.get_selected_columns()  
+		if (self.kind.get() == "hex" or self.kind.get() == "reg" or self.kind.get() == "resid") and ((len(selected_columns) > 2) or (len(selected_columns) == 1 and self.main_app.x_axis_combobox.get() == "")):
+			messagebox.showinfo("Info", "Please select just two variables")
+			return
 		
 		if self.main_app.use_plotly.get() == False:
   			# Create a Seaborn joint plot
