@@ -98,16 +98,17 @@ class RelPlotAnalysis(BaseAnalysis):
 				messagebox.showinfo("Information", "Select two or more Columns or one Column and the x-axis")
 				return			
 			
-			# Create a Seaborn relational plot
 			plot_args = self.create_plot_args(self.main_app.df)
 
 
+		# Create a Seaborn relational plot
 		g = sns.relplot(**plot_args)
 		if self.title_x_axis.get() != "":
 			g.set_axis_labels(x_var=self.title_x_axis.get())
 		if self.title_y_axis.get() != "":
 			g.set_axis_labels(y_var=self.title_y_axis.get())
 		fig = g.fig
+		fig.plot_args = plot_args
 		if self.plot_with.get() and self.plot_hight.get():
 			fig.set_size_inches(float(self.plot_with.get()), float(self.plot_hight.get()))
 		fig.suptitle(self.plot_title.get(), verticalalignment='top', fontsize=12)
@@ -120,6 +121,10 @@ class RelPlotAnalysis(BaseAnalysis):
 			axes_facet_map[ax] = facet_title
 
 		def on_click(event):
+			if self.main_app.multiplot.get():
+				self.main_app.open_windows.append(self.display_plot(event.canvas.figure))
+				return
+
 			ax_clicked = event.inaxes
 			if ax_clicked in axes_facet_map:
 				facet_title = axes_facet_map[ax_clicked]
