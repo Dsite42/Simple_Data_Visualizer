@@ -13,6 +13,7 @@ class ManipulateDataWindow:
 		self.fig = None
 		self.canvas = None
 		self.window = None
+		self.show_max_rows = tk.IntVar(value=100)
 		self.create_window()
 
 	def create_window(self):
@@ -23,18 +24,28 @@ class ManipulateDataWindow:
 		# Bind the close event
 		self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
-		# Add buttons and other UI elements here
-		save_button = tk.Button(self.window, text="Save as CSV", command=lambda: self.save_as_csv())
+		# Frame for buttons
+		self.first_frame = tk.Frame(self.window)
+		self.first_frame.grid(row=0, column=0, padx=5, pady=5, sticky='w')
+
+
+		save_button = tk.Button(self.first_frame, text="Save as CSV", command=lambda: self.save_as_csv())
 		save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
-		copy_button = tk.Button(self.window, text="Duplicate Dataframe", command=lambda: self.duplicate_dataframe())
-		copy_button.grid(row=0, column=0, padx=125, pady=5, sticky='w')
+		copy_button = tk.Button(self.first_frame, text="Duplicate Dataframe", command=lambda: self.duplicate_dataframe())
+		copy_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
 		
-		set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
-		set_refresh_button.grid(row=0, column=0, padx=300, pady=5, sticky='w')
+		set_refresh_button = tk.Button(self.first_frame, text="Set Refresh", command=lambda: self.set_refresh())
+		set_refresh_button.grid(row=0, column=2, padx=5, pady=5, sticky='w')
   
-		show_datatypes_button = tk.Button(self.window, text="Show datatypes", command=lambda: messagebox.showinfo("Datatypes", str(self.main_app.df.dtypes)))
-		show_datatypes_button.grid(row=0, column=0, padx=415, pady=5, sticky='w')
+		show_datatypes_button = tk.Button(self.first_frame, text="Show datatypes", command=lambda: messagebox.showinfo("Datatypes", str(self.main_app.df.dtypes)))
+		show_datatypes_button.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+  
+		# Show max rows
+		show_max_rows_label = tk.Label(self.first_frame, text="Show max rows:")
+		show_max_rows_label.grid(row=0, column=4, padx=5, pady=5, sticky='w')
+		show_max_rows_entry = tk.Entry(self.first_frame, textvariable=self.show_max_rows, width=8)
+		show_max_rows_entry.grid(row=0, column=5, padx=5, pady=5, sticky='w')
 
 
 		# Frame for Treeview and Scrollbars
@@ -68,7 +79,7 @@ class ManipulateDataWindow:
 			self.data_treeview.column(col, anchor=tk.CENTER, width=100, stretch=False)
 
 		# Add dataFrame data
-		for index, row in self.main_app.df.iterrows():
+		for index, row in self.main_app.df.head(self.show_max_rows.get()).iterrows():
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
 
@@ -216,7 +227,7 @@ class ManipulateDataWindow:
   
 	def reset_datetime_index(self):
 		self.main_app.df.reset_index(inplace=True, drop=True)
-		self.refresh_treeview()
+		self.refresh_treeview(False)
 		self.update_datetime_combobox()
 	   
 		
@@ -262,7 +273,7 @@ class ManipulateDataWindow:
 			self.data_treeview.column(col, anchor=tk.CENTER, width=100, stretch=False)
 		
 		# Add DataFrame-Data
-		for index, row in self.main_app.df.iterrows():
+		for index, row in self.main_app.df.head(self.show_max_rows.get()).iterrows():
 			row_data = [index] + list(row)
 			self.data_treeview.insert("", tk.END, values=row_data)
 		if is_filter == False:
