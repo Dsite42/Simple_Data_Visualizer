@@ -153,6 +153,9 @@ class JointPlotAnalysis(BaseAnalysis):
 
 	# Create a multiplot
 	def create_multi_plot(self, refresh_plot):
+		if self.main_app.x_axis_combobox.get() == "":
+			messagebox.showinfo("Information", "Please select x-axis.")
+			return
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) == 0:
 			selected_columns = list(self.main_app.df.columns)
