@@ -199,7 +199,7 @@ class PlotWindow:
         
         if self.fig_autoscale.get() == True :
             if (abs(current_width - self.plot_width) > self.additional_width or abs(current_height - self.plot_height) > self.additional_height):
-                self.resize_fig(current_width, current_height)
+                self.resize_fig(current_width - 20, current_height)
                 self.display_plot(self.fig)
 
         else:
