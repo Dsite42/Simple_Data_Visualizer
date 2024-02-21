@@ -43,7 +43,7 @@ class RelPlotAnalysis(BaseAnalysis):
 		
 		y_axis = [col for col in selected_columns if col != x_axis]
   
-		if self.main_app.multiplot.get() == False and (len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != "")):
+		if self.main_app.multiplot.get() == False and (len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != "" and self.main_app.x_axis_combobox.get() not in selected_columns)):
 			all_columns = list(data.columns)
 			if self.main_app.x_axis_combobox.get() == "":
 				id_vars = [col for col in all_columns if col not in selected_columns[1:]]
@@ -58,7 +58,7 @@ class RelPlotAnalysis(BaseAnalysis):
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
    
 		if self.main_app.use_plotly.get() == False:
-			if (self.main_app.multiplot.get() or len(selected_columns) == 2) and self.hue.get():
+			if self.hue.get():
 				plot_args["hue"] = self.hue.get()
 			if self.style.get():
 				plot_args["style"] = self.style.get()
@@ -71,7 +71,7 @@ class RelPlotAnalysis(BaseAnalysis):
     
 		else:
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data_frame": data}
-			if len(selected_columns) == 2 and self.hue.get():
+			if self.hue.get():
 				plot_args["color"] = self.hue.get()
 			if self.style.get():
 				plot_args["symbol"] = self.style.get()	

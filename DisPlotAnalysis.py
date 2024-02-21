@@ -43,7 +43,7 @@ class DisPlotAnalysis(BaseAnalysis):
 		
 		y_axis = [col for col in selected_columns if col != x_axis]
   
-		if self.main_app.multiplot.get() == False and (len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != "")):
+		if self.main_app.multiplot.get() == False and (len(selected_columns) > 2 or (len(selected_columns) == 2 and self.main_app.x_axis_combobox.get() != "" and self.main_app.x_axis_combobox.get() not in selected_columns)):
 			all_columns = list(data.columns)
 			if self.main_app.x_axis_combobox.get() == "":
 				id_vars = [col for col in all_columns if col not in selected_columns[1:]]
