@@ -101,7 +101,7 @@ class ManipulateDataWindow:
 		# Set datatype
 		self.set_datatype_label = tk.Label(self.data_manipulation_frame, text="Set datatype:")
 		self.set_datatype_label.grid(row=0, column=2, padx=5, pady=5, sticky='w')
-		self.set_datatype_combobox = ttk.Combobox(self.data_manipulation_frame, values=['int', 'float', 'str', 'category'], state="readonly")
+		self.set_datatype_combobox = ttk.Combobox(self.data_manipulation_frame, values=['int', 'float', 'str', 'category', 'datetime'], state="readonly")
 		self.set_datatype_combobox.grid(row=0, column=3, padx=5, pady=5, sticky='w')
 		self.set_datatype_button = tk.Button(self.data_manipulation_frame, text="Set", command=self.set_datatype)
 		self.set_datatype_button.grid(row=0, column=4, padx=5, pady=5, sticky='w')
@@ -356,5 +356,7 @@ class ManipulateDataWindow:
 					self.main_app.df[col] = self.main_app.df[col].astype('str')
 				elif self.set_datatype_combobox.get() == 'category':
 					self.main_app.df[col] = self.main_app.df[col].astype('category')
+				elif self.set_datatype_combobox.get() == 'datetime':
+					self.main_app.df[col] = pd.to_datetime(self.main_app.df[col])
 		except Exception as e:
 			messagebox.showerror("Error", f"Error at setting datatype: {e}")
