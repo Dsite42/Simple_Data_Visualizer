@@ -95,13 +95,13 @@ class MultiPlotWindow:
 
         # Berechne die Anzahl der benötigten Reihen und Spalten
         total_plots = len(figures)
-        rows = canvas_rows
-        columns = canvas_columns
+        self.rows = canvas_rows
+        self.columns = canvas_columns
 
         # Erstelle für jedes Figure-Objekt ein Canvas-Widget und ordne es im Raster an
         for i, fig in enumerate(figures):
-            row = i // columns
-            column = i % columns
+            row = i // self.columns
+            column = i % self.columns
             fig_canvas = FigureCanvasTkAgg(fig, master=self.plot_frame)
             fig_canvas.draw()
             plot_widget = fig_canvas.get_tk_widget()
@@ -109,9 +109,9 @@ class MultiPlotWindow:
             plot_widget.grid(row=row, column=column, sticky='nsew', padx=5, pady=5)
 
         # Stelle sicher, dass der plot_frame genug Platz für alle widgets bietet
-        for i in range(rows):
+        for i in range(self.rows):
             self.plot_frame.grid_rowconfigure(i, weight=1)
-        for i in range(columns):
+        for i in range(self.columns):
             self.plot_frame.grid_columnconfigure(i, weight=1)
 
         # Aktualisiere die Scrollregion auf die Größe des inneren Frames
@@ -146,15 +146,62 @@ class MultiPlotWindow:
             print("Refresh set")
         
     def save_plot(self):
-        plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
+        plot_title = self.figures[0]._suptitle.get_text() if self.figures[0]._suptitle else "MyPlot"
         filepath = filedialog.asksaveasfilename(
             defaultextension='',
             filetypes=[("PNG files", "*.png"), ("All Files", "*.*")],
             title="Save plot",
-            initialfile= plot_title
+            initialfile=plot_title
         )
         if filepath:
-            self.fig.savefig(filepath)
+            import io
+            from PIL import Image
+            print("Rows:", self.rows, "Columns:", self.columns)
+            # Temporary storage for buffers to keep them open
+            buffers = []
+
+            # Assuming self.figures is a list of matplotlib.figure.Figure objects
+            rendered_images = []
+            for fig in self.figures:
+                buf = io.BytesIO()
+                fig.savefig(buf, format='png', bbox_inches='tight')
+                buf.seek(0)
+                img = Image.open(buf)
+                rendered_images.append(img)
+                # Add the buffer to the list instead of closing it
+                buffers.append(buf)
+                
+            # Calculate the total grid size based on the max width and height of the images in each row/column
+            max_width_per_column = max(img.width for img in rendered_images)  # Assuming uniform width for simplicity
+            max_height_per_row = max(img.height for img in rendered_images)  # Assuming uniform height for simplicity
+            total_width = max_width_per_column * self.columns
+            total_height = max_height_per_row * self.rows
+
+            # Create a new image with the appropriate size
+            combined_img = Image.new('RGB', (total_width, total_height), 'white')  # Background color is white
+
+            # Initialize coordinates for pasting images
+            current_x, current_y = 0, 0
+
+            for i, img in enumerate(rendered_images):
+                # Paste the image into the combined image at the current position
+                combined_img.paste(img, (current_x, current_y))
+                
+                # Update current_x to move to the right for the next image
+                current_x += max_width_per_column
+                
+                # Check if we've reached the end of a row
+                if (i + 1) % self.columns == 0:
+                    # Reset current_x to 0 for the next row
+                    current_x = 0
+                    # Move current_y down to start the next row
+                    current_y += max_height_per_row
+
+            # After pasting all images, save the combined image
+            combined_img.save(filepath)
+
+
+
         
         
     def copy_plot(self, fig):
