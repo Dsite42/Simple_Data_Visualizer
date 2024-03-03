@@ -24,7 +24,6 @@ class MultiPlotWindow:
         """Initialisiere die letzten Größenwerte basierend auf dem aktuellen Fenster."""
         self.last_width = self.window.winfo_width()
         self.last_height = self.window.winfo_height()
-        print("Initialisierung: last_width: ", self.last_width, "last_height: ", self.last_height)
 
     def create_window(self):
         self.window = tk.Toplevel(self.main_app.tk_root)
@@ -43,7 +42,7 @@ class MultiPlotWindow:
         save_button = tk.Button(self.window, text="Save Plot", command=lambda: self.save_plot())
         save_button.grid(row=0, column=0, padx=5, pady=5, sticky='w')
   
-        copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.fig))
+        copy_button = tk.Button(self.window, text="Copy Plot", command=lambda: self.copy_plot(self.figures))
         copy_button.grid(row=0, column=1, padx=5, pady=5, sticky='w')
         
         set_refresh_button = tk.Button(self.window, text="Set Refresh", command=lambda: self.set_refresh())
@@ -147,20 +146,14 @@ class MultiPlotWindow:
         
     def save_plot(self):
         plot_title = self.figures[0]._suptitle.get_text() if self.figures[0]._suptitle else "MyPlot"
-        filepath = filedialog.asksaveasfilename(
-            defaultextension='',
-            filetypes=[("PNG files", "*.png"), ("All Files", "*.*")],
-            title="Save plot",
-            initialfile=plot_title
-        )
+        filepath = filedialog.asksaveasfilename(defaultextension='', filetypes=[("PNG files", "*.png"), ("All Files", "*.*")],
+            title="Save plot", initialfile=plot_title)
         if filepath:
             import io
             from PIL import Image
-            print("Rows:", self.rows, "Columns:", self.columns)
             # Temporary storage for buffers to keep them open
             buffers = []
 
-            # Assuming self.figures is a list of matplotlib.figure.Figure objects
             rendered_images = []
             for fig in self.figures:
                 buf = io.BytesIO()
@@ -182,60 +175,75 @@ class MultiPlotWindow:
 
             # Initialize coordinates for pasting images
             current_x, current_y = 0, 0
-
             for i, img in enumerate(rendered_images):
-                # Paste the image into the combined image at the current position
                 combined_img.paste(img, (current_x, current_y))
-                
-                # Update current_x to move to the right for the next image
                 current_x += max_width_per_column
-                
                 # Check if we've reached the end of a row
                 if (i + 1) % self.columns == 0:
-                    # Reset current_x to 0 for the next row
                     current_x = 0
-                    # Move current_y down to start the next row
                     current_y += max_height_per_row
 
             # After pasting all images, save the combined image
             combined_img.save(filepath)
-
-
-
+            
+            for buf in buffers:
+                buf.close()
         
         
-    def copy_plot(self, fig):
+    def copy_plot(self, figures):
         if self.main_app.operating_system == "Windows":
-            self.copyToClipboardWindows(fig)
+            self.copyToClipboardWindows()
         elif self.main_app.operating_system == "Linux":
-            self.copyToClippboardLinux(fig)
-        
-            
-
+            self.copyToClippboardLinux()
         elif self.main_app.operating_system == "Darwin":
-            self.copyToClipboardMac(fig)
+            self.copyToClipboardMac()
             
 
-    def copyToClipboardWindows(self, fig):
+    def copyToClipboardWindows(self):
         import io
         from PIL import Image
         import win32clipboard
-        plot_title = self.fig._suptitle.get_text() if self.fig._suptitle else "MyPlot"
-        # Save plotly figure in a BytesIO buffer as PNG
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png')
-        buf.seek(0)
-        # Copy the image from the buffer to the clipboard
-        image = Image.open(buf)
+        import matplotlib.pyplot as plt
+
+        buffers = []
+        rendered_images = []
+        for fig in self.figures:
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight')
+            buf.seek(0)
+            img = Image.open(buf)
+            rendered_images.append(img)
+            buffers.append(buf)
+
+        # Calculate the total grid size based on the max width and height of the images in each row/column
+        max_width_per_column = max(img.width for img in rendered_images)
+        max_height_per_row = max(img.height for img in rendered_images)
+        total_width = max_width_per_column * self.columns
+        total_height = max_height_per_row * self.rows
+        # Create a new image with the appropriate size
+        combined_img = Image.new('RGB', (total_width, total_height), 'white')
+        # Initialize coordinates for pasting images
+        current_x, current_y = 0, 0
+        for i, img in enumerate(rendered_images):
+            combined_img.paste(img, (current_x, current_y))
+            current_x += max_width_per_column
+            # Check if we've reached the end of a row
+            if (i + 1) % self.columns == 0:
+                current_x = 0
+                current_y += max_height_per_row
+
+        # Copy the combined image to the clipboard
         output = io.BytesIO()
-        image.convert("RGB").save(output, "BMP")
-        data = output.getvalue()[14:]
+        combined_img.convert("RGB").save(output, "BMP")
+        data = output.getvalue()[14:]  # BMP files have a 14-byte header that needs to be removed
         output.close()
+
         win32clipboard.OpenClipboard()
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
         win32clipboard.CloseClipboard()
-        buf.close()
+        for buf in buffers:
+            buf.close()
 
 
     def copyToClippboardLinux(self, fig):
