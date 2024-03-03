@@ -198,7 +198,7 @@ class RelPlotAnalysis(BaseAnalysis):
 				canvas_rows = 1
 				canvas_columns = number_of_plots
 			else:
-				canvas_rows = math.ceil(number_of_plots // self.main_app.multi_plot_columns_var.get())
+				canvas_rows = math.ceil(number_of_plots / self.main_app.multi_plot_columns_var.get())
 				canvas_columns = self.main_app.multi_plot_columns_var.get()
 		
 		elif self.main_app.multi_plot_columns_var.get() == 0:
