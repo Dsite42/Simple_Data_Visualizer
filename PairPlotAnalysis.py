@@ -45,7 +45,7 @@ class PairPlotAnalysis(BaseAnalysis):
     
 		else:
 			plot_args = {"dimensions": selected_columns if len(selected_columns) >= 1 else None, "data_frame": data}
-			if len(selected_columns) == 2 and self.hue.get():
+			if self.hue.get():
 				plot_args["color"] = self.hue.get()
 
 		return plot_args
