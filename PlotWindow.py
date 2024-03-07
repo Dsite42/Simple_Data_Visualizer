@@ -63,7 +63,7 @@ class PlotWindow:
          # Configure window to be able to resize
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
-        self.plot_canvas = tk.Canvas(self.canvas_frame, width=min(self.plot_width, self.max_window_width), height=min(self.plot_height, self.max_window_height))
+        self.plot_canvas = tk.Canvas(self.canvas_frame, width=int(min(self.plot_width, self.max_window_width)), height=int(min(self.plot_height, self.max_window_height)))
         self.plot_canvas.grid(row=0, column=0, sticky='nsew')
 
         self.v_scroll = tk.Scrollbar(self.canvas_frame, orient='vertical', command=self.plot_canvas.yview)

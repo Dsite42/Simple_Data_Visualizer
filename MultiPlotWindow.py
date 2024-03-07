@@ -75,7 +75,7 @@ class MultiPlotWindow:
         self.window.grid_columnconfigure(0, weight=1)
 
         # Scrollable canvas
-        self.scroll_canvas = tk.Canvas(self.canvas_frame, width=min(self.plot_width, self.max_window_width), height=min(self.plot_height, self.max_window_height))
+        self.scroll_canvas = tk.Canvas(self.canvas_frame, width=int(min(self.plot_width, self.max_window_width)), height=int(min(self.plot_height, self.max_window_height)))
         self.scroll_canvas.grid(row=0, column=0, sticky='nsew')
 
         v_scroll = tk.Scrollbar(self.canvas_frame, orient='vertical', command=self.scroll_canvas.yview)
