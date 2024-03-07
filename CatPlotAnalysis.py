@@ -157,7 +157,7 @@ class CatPlotAnalysis(BaseAnalysis):
 		elif self.kind.get() == "violin":
 			fig = px.violin(**plot_args, box=True)
 		elif self.kind.get() == "bar":
-			fig = self.create_px_bar_plot_args(plot_args)
+			fig = px.bar(**plot_args)
 		elif self.kind.get() == "count":
 			fig = px.histogram(**plot_args)
 			fig.update_layout(bargap=0.1)
@@ -354,23 +354,3 @@ class CatPlotAnalysis(BaseAnalysis):
 			self.toggle_arguments_button.config(text="Hide Plot Arguments")
 		self.plot_arguments_frame_visible = not self.plot_arguments_frame_visible
   
-	def create_px_bar_plot_args(self, plot_args):
-		df = plot_args.get("data_frame")
-		x_axis = plot_args.get("x")
-		y_axis = plot_args.get("y")
-	
-		def mean_confidence_interval(data, confidence=0.95):
-			a = 1.0 * np.array(data)
-			n = len(a)
-			m, se = np.mean(a), stats.sem(a)
-			h = se * stats.t.ppf((1 + confidence) / 2., n-1)
-			return m, m-h, m+h
-
-		aggregated_df = df.groupby(x_axis)[y_axis].apply(mean_confidence_interval).reset_index()
-		aggregated_df[['mean', 'lower', 'upper']] = pd.DataFrame(aggregated_df[y_axis].tolist(), index=aggregated_df.index)
-		plot_args = {}
-
-		fig = px.bar(aggregated_df, x=x_axis, y='mean',
-					error_y_minus=aggregated_df['mean'] - aggregated_df['lower'],
-					error_y=aggregated_df['upper'] - aggregated_df['mean'])
-		return fig
