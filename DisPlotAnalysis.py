@@ -60,7 +60,7 @@ class DisPlotAnalysis(BaseAnalysis):
 			plot_args = {"data": data}
 		else:
 			plot_args = {"x": x_axis, "y": y_axis[0] if len(y_axis) == 1 else y_axis, "data": data}
-   
+
 		if self.main_app.use_plotly.get() == False:
 			if self.hue.get():
 				plot_args["hue"] = self.hue.get()
@@ -155,6 +155,9 @@ class DisPlotAnalysis(BaseAnalysis):
 		selected_columns = self.main_app.get_selected_columns()
 		if len(selected_columns) > 1 and self.kind.get() == "ecdf":
 			messagebox.showinfo("Information", "ECDF is not supported for more than one column")
+			return
+		if len(selected_columns) == 0 and self.kind.get() == "kde":
+			messagebox.showinfo("Information", "KDE in plotly needs x and y axis")
 			return
 
 		# Create a Plotly dis plot
