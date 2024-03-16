@@ -8,6 +8,7 @@ from cefpython3 import cefpython as cef
 class PlotlyWindow:
     def __init__(self, main_app, plot_title=""):
         self.main_app = main_app
+        self.file_path = None
         self.plot_title = plot_title
 
         self.create_window()
@@ -42,7 +43,7 @@ class PlotlyWindow:
     def on_close(self):
         #if self.fig:
         #    plt.close(self.fig)
-        if os.path.exists(self.file_path):
+        if self.file_path and os.path.exists(self.file_path):
             os.remove(self.file_path)
         self.window.destroy()
         self.browser.CloseBrowser(forceClose=True)
