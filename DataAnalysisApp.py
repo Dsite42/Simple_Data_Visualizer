@@ -26,8 +26,8 @@ class DataAnalysisApp:
 		self.tk_root.title("Simple Data Analyzer")
 		self.tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
 		## set the scaling
-		#scale_factor = 1.0
-		#tk_root.tk.call('tk', 'scaling', scale_factor)
+		#scale_factor = 0.9
+		#self.tk_root.tk.call('tk', 'scaling', scale_factor)
 		self.operating_system = operating_system
 		print("OS: ", self.operating_system)
   
@@ -168,10 +168,8 @@ class DataAnalysisApp:
 		command_line_arguments = {
     	    "no-sandbox": "",  # Note: The value is empty; the presence of the key is what matters.
     	}
-
-    	# Set up CEF before initializing
-    	
-		self.cefpython = cef.Initialize(settings={}, switches=command_line_arguments)
+		settings = {} #"remote_debugging_port": 9222, "log_severity": cef.LOGSEVERITY_INFO, "log_file": "debug.log",}
+		self.cefpython = cef.Initialize(settings=settings, switches=command_line_arguments)
 		self.tk_root.mainloop()
 
 

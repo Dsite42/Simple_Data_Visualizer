@@ -2,6 +2,7 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import filedialog
 import base64
+import os
 from cefpython3 import cefpython as cef
 
 class PlotlyWindow:
@@ -41,20 +42,38 @@ class PlotlyWindow:
     def on_close(self):
         #if self.fig:
         #    plt.close(self.fig)
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
         self.window.destroy()
         self.browser.CloseBrowser(forceClose=True)
+
 
     def display_plot(self, fig):
         self.fig = fig
         self.adjust_window_size()
         plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn', div_id='my-plot-div')
         data_url = f"data:text/html;charset=utf-8;base64,{base64.b64encode(plot_html.encode()).decode()}"
-        if not hasattr(self, 'browser'):
-            self.browser = cef.CreateBrowserSync(self.window_info, url=data_url) 
+
+        # max length for data-urls
+        max_length = 2097152
+
+        if len(data_url) > max_length:
+            current_dir = os.getcwd()
+            file_name = "large_plot_tmp.html"
+            self.file_path = os.path.join(current_dir, file_name)
+            with open(self.file_path, 'w') as file:
+                file.write(plot_html)
+            file_url = f'file://{self.file_path}'
+            load_url = file_url
         else:
-            self.browser.LoadUrl(data_url)
+            load_url = data_url
 
-
+        if not hasattr(self, 'browser'):
+            self.browser = cef.CreateBrowserSync(self.window_info, url=load_url)
+        else:
+            self.browser.LoadUrl(load_url)
+      
+            
     def adjust_window_size(self):
         additional_height = 40  # Additional height for axis labels and buttons
         additional_with = 20 # Additional width for axis labels and buttons
