@@ -8,12 +8,12 @@
   - [Manipulate Data](#manipulate-data)
 - [3. Installation](#3-installation)
   - [Linux](#linux)
+  - [Windows](#windows)
 - [4. Usage and Examples](#4-usage-and-examples)
 
 
 ### 1. About
-This is a simple tool to visualize data for a quick Exploratory Data Analysis (EDA). You can create various plot types as seaborn or plotly plot.
-This is my first bigger python and first GUI project. The idea was to achieve a practical result with limited time and a good learning curve.
+This is a simple tool to visualize data for a quick Exploratory Data Analysis (EDA). You can create various plot types as seaborn or plotly plot via a GUI in multiple windows (RelPlot, PairPlot, JointPlot, DisPlot, CatPlot, LmPlot, 3DPlot). This is my first bigger python and first GUI project. The idea was to achieve a practical result with limited time and a good learning curve.
 
 ### 2. Features
 
@@ -136,6 +136,9 @@ A generic way using pyenv-installer is as follows:
 
 ##### Running the Simple Data Visualizer
 `python main.py`
+
+#### Windows
+Use WSL or WSL2 and follow the Linux instructions.
 
 ### 4. Usage and Examples
 A short youtube video will come soon.
