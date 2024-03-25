@@ -166,7 +166,7 @@ class DataAnalysisApp:
 	def run(self):
     	# Initialize CEF with the command line arguments
 		command_line_arguments = {
-    	    "no-sandbox": "",  # Note: The value is empty; the presence of the key is what matters.
+    	    "no-sandbox": "",
 			"disable-gpu": "",
     	}
 		settings = {} #"remote_debugging_port": 9222, "log_severity": cef.LOGSEVERITY_INFO, "log_file": "debug.log", "multi_threaded_message_loop":False, }

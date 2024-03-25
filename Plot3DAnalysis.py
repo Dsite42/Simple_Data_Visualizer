@@ -354,7 +354,7 @@ class Plot3DAnalysis(BaseAnalysis):
 	def load_argument_values(self):
 		if self.main_app.df is not None:
 			self.main_app.plot3d_analysis.z_axis_combobox['values'] = list(self.main_app.df.columns)
-			#self.main_app.plot3d_analysis.kind_combobox['values'] = ['scatter', 'line']
+			self.main_app.plot3d_analysis.kind_combobox['values'] = ['scatter_3d']
 			self.main_app.plot3d_analysis.hue_combobox['values'] = list(self.main_app.df.columns)
 			self.main_app.plot3d_analysis.size_combobox['values'] = list(self.main_app.df.columns)
 			self.main_app.plot3d_analysis.style_combobox['values'] = list(self.main_app.df.columns)
