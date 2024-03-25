@@ -1,71 +1,69 @@
 
 ### 1. About
-
+This is a simple tool to visualize data for a quick Exploratory Data Analysis (EDA). You can create various plot types as seaborn or plotly plot.
+This is my first bigger python and first GUI project. The idea was to have with restricted time a fast result and good learning curve.
 
 ### 2. Features
-**Plots**  
-*RelPlots (Seaborn, Plotly, Multiplot)*  
+
+#### Main Window
+<img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;">
+#### Plots
+**RelPlots (Seaborn, Plotly, Multiplot)**  
 Create scatter and line relation plots with kwargs kind, hue, size, style, row, col.
 
-<img src="readmeFiles/RelPlot.png" width="400" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/RelPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/RelPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/RelPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
 
-*PairPlots (Seaborn, Plotly)*  
+**PairPlots (Seaborn, Plotly)**  
 Create pair plots with kwargs kind, diag_kind, hue, corner.
 
-<img src="readmeFiles/PairPlot.png" width="400" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/PairPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/PairPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/PairPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
-*JointPlot (Seaborn, Plotly, Multiplot)*  
+**JointPlot (Seaborn, Plotly, Multiplot)**  
 Create joint plots with kwargs kind, hue.
 
-<img src="readmeFiles/JointPlot.png" width="500" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/JointPlot_plotly.png" width="450" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/JointPlot.png" width="500" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/JointPlot_plotly.png" width="450" height="auto" style="border: 2px solid black;">
 
-*DisPlot (Seaborn, Plotly, Multiplot)*  
+**DisPlot (Seaborn, Plotly, Multiplot)**  
 Create distribution plots with kwargs kind, hue, rug, row, col.
 
-<img src="readmeFiles/DisPlot.png" width="400" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/DisPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/DisPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/DisPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
-*CatPlot (Seaborn, Plotly, Multiplot)*  
+**CatPlot (Seaborn, Plotly, Multiplot)**  
 Create categorical plots with kwargs kind, hue, row, col.
 
-<img src="readmeFiles/CatPlot.png" width="400" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/CatPlot_plotly.png" width="370" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/CatPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/CatPlot_plotly.png" width="370" height="auto" style="border: 2px solid black;">
 
-*LmPlot (Seaborn, Plotly, Multiplot)*  
+**LmPlot (Seaborn, Plotly, Multiplot)**  
 Create linear model plots with kwargs heu, scatter, x_bins, robust, facet_kws, row, col.
 
-<img src="readmeFiles/LmPlot.png" width="400" height="auto" style="border: 2px solid black;">
-<img src="readmeFiles/LmPlot_plotly.png" width="470" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/LmPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/LmPlot_plotly.png" width="470" height="auto" style="border: 2px solid black;">
 
-*3DPlot (Plotly)*  
+**3DPlot (Plotly)**  
 Create 3D plots with kwargs hue, size, style.
 
 <img src="readmeFiles/3DPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
 
-*General fields*
+**General fields**
 - Plot/ x-axis/ y-axis/ z-axis title
 - plot with (seaborn/multiplot: inches, plotly: pixels)
 - plot height (seaborn/multiplot: inches, plotly: pixels)
 
-**Window Features**  
-*Save Plot* (Seaborn, Plotly, Multiplot))  
+#### Window Features  
+**Save Plot** (Seaborn, Plotly, Multiplot))  
 Click save plot to save the plot as a .png file.
 
-*Copy Plot* (Seaborn, Plotly, Multiplot)
+**Copy Plot** (Seaborn, Plotly, Multiplot)
 Click copy plot to copy the plot to the clipboard.
 
-*Set Refresh* (Seaborn, Plotly, Multiplot)  
+**Set Refresh** (Seaborn, Plotly, Multiplot)  
 Click set refresh to refresh an existing window with the new plot. A window can just be refreshed with the same window type. (Seaborn, Plotly, Multiplot)
 
-*Auto Scale* (Seaborn)  
+**Auto Scale** (Seaborn)  
 Ceck auto scale to resize the plot when changing the window size.
 
-**Manipulate Data**  
+#### Manipulate Data  
 Here you can manipulate the data with the following options:
 - delete columns
 - set data type
@@ -85,7 +83,7 @@ Here you can manipulate the data with the following options:
 #### Linux
 You need python version 3.7.
 ##### Install pyenv as a python version manager
-You can install pyenv via pyenv-installer or their system's package manager.  
+You can install pyenv via pyenv-installer or the system's package manager.  
 A generic way using pyenv-installer is as follows:  
 `curl https://pyenv.run | bash`
 
