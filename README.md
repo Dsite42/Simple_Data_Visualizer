@@ -1,7 +1,19 @@
 
+## Table of Contents
+- [1. About](#1-about)
+- [2. Features](#2-features)
+  - [Main Window](#main-window)
+  - [Plots](#plots)
+  - [Window Features](#window-features)
+  - [Manipulate Data](#manipulate-data)
+- [3. Installation](#3-installation)
+  - [Linux](#linux)
+- [4. Usage and Examples](#4-usage-and-examples)
+
+
 ### 1. About
 This is a simple tool to visualize data for a quick Exploratory Data Analysis (EDA). You can create various plot types as seaborn or plotly plot.
-This is my first bigger python and first GUI project. The idea was to have with restricted time a fast result and good learning curve.
+This is my first bigger python and first GUI project. The idea was to achieve a practical result with limited time and a good learning curve.
 
 ### 2. Features
 
@@ -56,7 +68,7 @@ Create 3D plots with kwargs hue, size, style.
 
 <img src="readmeFiles/3DPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
-**ManualPlot (Seaborn, Plotly)**
+**ManualPlot (Seaborn, Plotly)**  
 You can incert full python code here which will be executed. Create a manual plot. Important is just that you return a figure object.
 You can also manipulate the data by manipulating or redifining the df.
 
@@ -92,7 +104,6 @@ Here you can manipulate the data with the following options:
 <img src="readmeFiles/ManipulateData.png" width="400" height="auto" style="border: 2px solid black;">
 
   
-
 ### 3. Installation
 
 #### Linux
@@ -110,6 +121,7 @@ A generic way using pyenv-installer is as follows:
 - Then, you should restart your shell or re-source the configuration file:  
 `source ~/.bashrc`  # Or the respective config file
 
+##### Install Python
 - Now, you can install Python 3.7.16 using pyenv:  
 `pyenv install 3.7.16`
 
@@ -126,4 +138,5 @@ A generic way using pyenv-installer is as follows:
 `python main.py`
 
 ### 4. Usage and Examples
+A short youtube video will come soon.
 
