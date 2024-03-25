@@ -18,7 +18,7 @@ This is my first bigger python and first GUI project. The idea was to have with 
 - Click show plot to show the plot
 - Click refresh to refresh the plot
 
-<img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;">
+<img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;">
 
 #### Plots
 **RelPlots (Seaborn, Plotly, Multiplot)**  
