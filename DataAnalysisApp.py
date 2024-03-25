@@ -23,7 +23,7 @@ class DataAnalysisApp:
 	def __init__(self, operating_system):
 		self.tk_root = tk.Tk()
 		#tk_root.geometry("400x800")
-		self.tk_root.title("Simple Data Analyzer")
+		self.tk_root.title("Simple Data Visualizer")
 		self.tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
 		## set the scaling
 		#scale_factor = 0.9
@@ -167,8 +167,9 @@ class DataAnalysisApp:
     	# Initialize CEF with the command line arguments
 		command_line_arguments = {
     	    "no-sandbox": "",  # Note: The value is empty; the presence of the key is what matters.
+			"disable-gpu": "",
     	}
-		settings = {} #"remote_debugging_port": 9222, "log_severity": cef.LOGSEVERITY_INFO, "log_file": "debug.log",}
+		settings = {} #"remote_debugging_port": 9222, "log_severity": cef.LOGSEVERITY_INFO, "log_file": "debug.log", "multi_threaded_message_loop":False, }
 		self.cefpython = cef.Initialize(settings=settings, switches=command_line_arguments)
 		self.tk_root.mainloop()
 

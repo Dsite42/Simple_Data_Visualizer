@@ -6,13 +6,25 @@ This is my first bigger python and first GUI project. The idea was to have with 
 ### 2. Features
 
 #### Main Window
+- Open CSV file
+- Use Seaborn by default
+- Check Plotly to use plotly
+- Check Multiplot to create kind of subplots (Seaborn)
+- Define how much rows and columns the multiplot should have
+- Choose one of the loaded dataframes
+- Depending on plot type, choose x-axis, y-axis, z-axis
+- Choose plot type (RelPlot, PairPlot, JointPlot, DisPlot, CatPlot, LmPlot, 3DPlot, ManualPlot)
+- See Console output for errors
+- Click show plot to show the plot
+- Click refresh to refresh the plot
+
 <img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/MainWindow.png" width="400" height="auto" style="border: 2px solid black;">
+
 #### Plots
 **RelPlots (Seaborn, Plotly, Multiplot)**  
 Create scatter and line relation plots with kwargs kind, hue, size, style, row, col.
 
 <img src="readmeFiles/RelPlot.png" width="400" height="auto" style="border: 2px solid black;"> <img src="readmeFiles/RelPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
-
 
 **PairPlots (Seaborn, Plotly)**  
 Create pair plots with kwargs kind, diag_kind, hue, corner.
@@ -44,6 +56,9 @@ Create 3D plots with kwargs hue, size, style.
 
 <img src="readmeFiles/3DPlot_plotly.png" width="400" height="auto" style="border: 2px solid black;">
 
+**ManualPlot (Seaborn, Plotly)**
+You can incert full python code here which will be executed. Create a manual plot. Important is just that you return a figure object.
+You can also manipulate the data by manipulating or redifining the df.
 
 **General fields**
 - Plot/ x-axis/ y-axis/ z-axis title
