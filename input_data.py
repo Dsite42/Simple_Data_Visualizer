@@ -20,7 +20,7 @@ def open_file(self):
 				messagebox.showerror("Error reading CSV file", error)
 			else:
 				file_name = file_path.split('/')[-1] 
-				self.dataframes[file_name] = df
+				self.dataframes[file_name] = df.reset_index()
 
 	# Update the UI after successful file read
 	self.dataframes_combobox['values'] = list(self.dataframes.keys())
